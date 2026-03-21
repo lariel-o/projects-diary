@@ -4,14 +4,22 @@ import (
 	"fmt"
 	// "encoding/csv"
 	
+	// auxs "github.com/lariel-o/projects-diary/auxiliaries"
+
 	tea "charm.land/bubbletea/v2"
 )
 
 type WorldModel struct {
-	Tasks []string
-	Cursor int
-	CurrentView uint8 
-	/* 	1 ~ World View (show the projects and is the main View)
+	ProjectsTitle []string
+	ProjectsDescription []string
+	Cursor uint
+
+	// Save a pointer to the project who should be showing the description
+	ShowingDescription uint
+	IsShowingDescription bool
+
+	ViewControl uint8 
+	/* 	1 ~ Wold View (show the projects and is the main View)
 		2 ~ Project (List the uncompleted task) 
 		3 ~ Task    (Show the subtask selected)
 		4 ~ Change info
@@ -27,26 +35,31 @@ func (m WorldModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 
 		switch msg.String() {
-		case "ctrl-c", "q":
+		case "ctrl+c", "q":
 			return m, tea.Quit
 
 		case "up", "k":
 			if m.Cursor == 0 {
-				m.Cursor = len(m.Tasks) - 1
+				m.Cursor = uint(len(m.ProjectsTitle) - 1)
 			} else {
 				m.Cursor -= 1
 			}
 
 		case "down", "j":
-			if m.Cursor == len(m.Tasks) - 1 {
+			if m.Cursor == uint(len(m.ProjectsTitle) - 1) {
 				m.Cursor = 0
 			} else {
 				m.Cursor += 1
 			}
 
 		case "enter":
-			fmt.Println("enter")
-
+			// If there isn't anyone already showing the description
+			if m.ShowingDescription == m.Cursor && m.IsShowingDescription {
+				m.IsShowingDescription = false
+			} else {
+				m.ShowingDescription = m.Cursor
+				m.IsShowingDescription = true
+			}
 		}
 	}
 
@@ -55,13 +68,19 @@ func (m WorldModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m WorldModel) View() tea.View {
 	s := "=== === === === World === === === ===\n\n"
-	for whereIsCursor, task := range m.Tasks {
+	for interator, projectTitle := range m.ProjectsTitle {
 		cursor := " "
-		if whereIsCursor == m.Cursor {
+		description := ""
+
+		if m.IsShowingDescription && m.ShowingDescription == uint(interator){
+			description = "\n      ~ " + m.ProjectsDescription[m.ShowingDescription]
+		}
+
+		if uint(interator) == m.Cursor {
 			cursor = ">"
 		}
 
-		s += fmt.Sprintf("%s %s\n", cursor, task)
+		s += fmt.Sprintf("%s %s %s\n", cursor, projectTitle, description)
 	}
 
 	s += "\nPress q to quit"

@@ -44,7 +44,6 @@ func GetCSV(path string) (map[string] []string, error) {
 		column2: [data2.1, data2.2]
 		column3: [data3.1, data3.2] */
 
-	fmt.Println(toReturn)
 	return toReturn, nil
 }
 
