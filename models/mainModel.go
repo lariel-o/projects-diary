@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	// "encoding/csv"
 	
 	tea "charm.land/bubbletea/v2"
 )
@@ -10,8 +11,7 @@ type WorldModel struct {
 	Tasks []string
 	Cursor int
 	CurrentView uint8 
-	/*
-		1 ~ World View (show the projects and is the main View)
+	/* 	1 ~ World View (show the projects and is the main View)
 		2 ~ Project (List the uncompleted task) 
 		3 ~ Task    (Show the subtask selected)
 		4 ~ Change info

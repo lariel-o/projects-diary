@@ -7,25 +7,23 @@ import (
 	tea "charm.land/bubbletea/v2"
 
 	"github.com/lariel-o/projects-diary/models"
-	aux "github.com/lariel-o/projects-diary/auxiliaries"
+	auxs "github.com/lariel-o/projects-diary/auxiliaries"
 )
-
-var userHome, _ = os.UserHomeDir()
-var projectPath = userHome + "/.config/projects-diary"
 
 func main() {
 	// create the project dir
-	if err := aux.CreateProjectDir(projectPath); err != nil {
+	if err := auxs.CreateProjectDir(auxs.ProjectPath); err != nil {
 		fmt.Println("Could not create the project folder\n", err)
 		return 
 	}
 
 	// write the projects.csv file
-	if err := aux.WriteIfNotExist(projectPath + "/projects.csv", "title,finished,description"); err != nil {
+	if err := auxs.WriteIfNotExist(auxs.DefaultProjectCSV[0], auxs.DefaultProjectCSV[1]); err != nil {
 		fmt.Println("Unexpected err, not able to write file\n", err)
 		return
 	}
 
+	auxs.GetCSV(auxs.DefaultProjectCSV[0])
 
 	// initialize the program
 	p := tea.NewProgram(models.WorldModel {
