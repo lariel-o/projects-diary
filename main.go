@@ -3,62 +3,31 @@ package main
 import (
 	"fmt"
 	"os"
+	
 	tea "charm.land/bubbletea/v2"
+
+	"github.com/lariel-o/projects-diary/models"
 )
 
-type worldModel struct {
-	tasks []string
-	cursor int
-}
-
-func (m worldModel) Init() tea.Cmd {
-	return nil
-}
-
-func (m worldModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyPressMsg:
-
-		switch msg.String() {
-		case "ctrl-c", "q":
-			return m, tea.Quit
-
-		case "up", "k":
-			if m.cursor == 0 {
-				m.cursor = len(m.tasks) - 1
-			} else {
-				m.cursor -= 1
-			}
-
-		case "down", "j":
-			if m.cursor == len(m.tasks) - 1 {
-				m.cursor = 0
-			} else {
-				m.cursor += 1
-			}
-		}
-	}
-
-	return m, nil
-}
-
-func (m worldModel) View() tea.View {
-	s := "=== === === === World === === === ===\n\n"
-	for whereIsCursor, task := range m.tasks {
-		cursor := " "
-		if whereIsCursor == m.cursor {
-			cursor = ">"
-		}
-
-		s += fmt.Sprintf("%s %s\n", cursor, task)
-	}
-
-	s += "\nPress q to quit"
-	return tea.NewView(s)
-}
+var userHome, _ = os.UserHomeDir()
+var projectPath = userHome + "/.config/projects-diary"
 
 func main() {
-	p := tea.NewProgram(initialModel())
+	if err := createProjectDir(projectPath); err != nil {
+		fmt.Println("Could not create the project folder\n", err)
+		return 
+	}
+
+	if err := writeIfNotExist(projectPath + "/projects.csv", "title,finished,description"); err != nil {
+		fmt.Println("Unexpected err, not able to write file\n", err)
+		return
+	}
+
+	p := tea.NewProgram(models.WorldModel {
+		Cursor: 0,
+		Tasks: []string{"Task1", "Task2", "Task3"},
+		CurrentView: 0,
+	})
 
 	if _, err := p.Run(); err != nil {
 		fmt.Println("ERRRRR")
@@ -66,10 +35,26 @@ func main() {
 	}
 }
 
-func initialModel() worldModel {
-	return worldModel {
-		tasks: []string{"Task 1", "Task 2", "Task 3", "Task 4", },
-		cursor: 0,
+func createProjectDir(projectPath string) (error) {
+	err := os.Mkdir(projectPath, 0750)	
+	if err != nil && !os.IsExist(err) {
+		return err
 	}
+	return nil
+}
+
+func writeIfNotExist(filePath string, toWrite string) (error) {
+	_, openFileErr := os.OpenFile(filePath, 0, 0644)
+
+	if openFileErr != nil && !os.IsExist(openFileErr) {
+		writeErr := os.WriteFile(filePath, []byte(toWrite), 0666)
+		if writeErr != nil {
+			return writeErr
+		}
+	} else if os.IsExist(openFileErr) {
+		return openFileErr
+	}
+
+	return nil
 }
 
