@@ -2,9 +2,6 @@ package models
 
 import (
 	"fmt"
-	// "encoding/csv"
-	
-	// auxs "github.com/lariel-o/projects-diary/auxiliaries"
 
 	tea "charm.land/bubbletea/v2"
 )
