@@ -12,9 +12,20 @@ func CreateProjectDir() (error) {
 		return err
 	}
 
-	for _, filePath := range DatabaseInfo.allFilesPath {
-		if err := auxs.WriteIfNotExist(filePath, "{\"World\": []}"); err != nil {
-			return err
+	// create all files asked to
+	for fileType, filePath := range DatabaseInfo.FilesPath {
+		switch fileType {
+		case "main":
+			if err := auxs.WriteIfNotExist(filePath, "{\"World\": []}"); err != nil {
+				return err
+			}
+		case "optmized":
+			if err := auxs.WriteIfNotExist(filePath, `{
+					"CurrentProjectID": 0,	
+					"ProjectsNames": []
+				}`); err != nil {
+				return err
+			}
 		}
 	}
 

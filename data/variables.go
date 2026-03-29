@@ -5,6 +5,12 @@ import "os"
 var userHome, _ = os.UserHomeDir()
 var DatabasePath = userHome + "/.config/projects-diary"
 
+type OptmizedStructModel struct {
+	CurrentProjectID uint16
+	ProjectsNames []string
+}
+
+// START ~ Database struct in general
 type TaskStructModel struct {
 	Status string	 // Tell about how the task is going
 	Content string   // Tell about what is the tesk objective
@@ -27,14 +33,13 @@ type WorldStructModel struct {
 }
 
 type databaseInfo struct  {
-	mainDBPath string
-	allFilesPath []string
+	FilesPath map[string] string
 }
+// END
 
 var DatabaseInfo = databaseInfo {
-	mainDBPath: DatabasePath + "/main.json",
-	allFilesPath: []string {
-		DatabasePath + "/main.json",
+	FilesPath: map[string]string {
+		"main": DatabasePath + "/main.json",
+		"optmized": DatabasePath + "/optmized.json",
 	},
 }
-
