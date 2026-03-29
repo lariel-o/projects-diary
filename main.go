@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	
-	// tea "charm.land/bubbletea/v2"
-
+	tea "charm.land/bubbletea/v2"
 	"github.com/lariel-o/projects-diary/data"
+	"github.com/lariel-o/projects-diary/display"
 )
 
 func main() {
@@ -15,13 +15,10 @@ func main() {
 		return 
 	}
 
-	test := data.ProjectStructModel{
-		ProjectName: "Lucas Ariel",
-	}
-
-	if err := data.AddNewProject(data.DatabaseInfo.FilesPath["main"], test); err != nil {
+	p := tea.NewProgram(display.Daishi{0})
+	if _, err := p.Run(); err != nil {
 		fmt.Println(err)
-		return
+		return 
 	}
 }
 
