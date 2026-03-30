@@ -15,7 +15,7 @@ func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 		switch m.CurrentView {
 		case 0:
-			return m, worldDisplay.update(msg.String())	
+			return m, worldDisplay.update(msg.String(), &m)	// the update function at worlddisplay will deal with everything
 		}
 	}
 
@@ -24,6 +24,11 @@ func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Daishi) View() tea.View {
 	s := ""
+
+	switch m.CurrentView {
+	case 0:
+		s = worldDisplay.view()
+	}
 
 	return tea.NewView(s)
 }
