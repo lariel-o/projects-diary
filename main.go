@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// create the initial folder/file's project structure
-	if err := data.CreateProjectDir(); err != nil {
+	if err := data.InitDatas(); err != nil {
 		fmt.Println("Could not create the project folder/file\n	~", err)
 		return 
 	}

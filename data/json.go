@@ -5,8 +5,7 @@ import (
 	"os"
 )
 
-func AddNewProject(project ProjectStructModel) error {
-	// read the file at path
+func readDB(database *WorldStructModel) error {
 	data, err := os.ReadFile(DatabaseInfo.FilesPath["main"])
 	if err != nil { return err }
 
@@ -15,22 +14,30 @@ func AddNewProject(project ProjectStructModel) error {
 	err = json.Unmarshal(data, &db)
 	if err != nil { return err }
 
-	// [START] append project to db
-	project.ID = uint16(len(db.World))
-	db.World = append(db.World, project)
-	// [END]
+	*database = db
+	return nil
+}
 
-	// transform it in json
-	b, err := json.Marshal(db)
+func WriteAtDatabase() error {
+	b, err := json.Marshal(DB)
 	if err != nil { return err }
 
-
 	if err := os.WriteFile(DatabaseInfo.FilesPath["main"], b, 0666); err != nil { 
-		return err 
+		return err
 	}
 
 	return nil
 }
 
+func AddNewProject(project ProjectStructModel) error {
+	// [START] append project to db
+	project.ID = uint16(len(DB.World))
+	DB.World = append(DB.World, project)
+	// [END]
+
+	WriteAtDatabase()
+
+	return nil
+}
 
 
