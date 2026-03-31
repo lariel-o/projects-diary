@@ -5,11 +5,6 @@ import "os"
 var userHome, _ = os.UserHomeDir()
 var DatabasePath = userHome + "/.config/projects-diary"
 
-type OptmizedStructModel struct {
-	CurrentProjectID uint16
-	ProjectsNames []string
-}
-
 // START ~ Database struct in general
 type TaskStructModel struct {
 	Status string	 // Tell about how the task is going
@@ -40,6 +35,5 @@ type databaseInfo struct  {
 var DatabaseInfo = databaseInfo {
 	FilesPath: map[string]string {
 		"main": DatabasePath + "/main.json",
-		"optmized": DatabasePath + "/optmized.json",
 	},
 }

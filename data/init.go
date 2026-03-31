@@ -19,13 +19,6 @@ func CreateProjectDir() (error) {
 			if err := auxs.WriteIfNotExist(filePath, "{\"World\": []}"); err != nil {
 				return err
 			}
-		case "optmized":
-			if err := auxs.WriteIfNotExist(filePath, `{
-					"CurrentProjectID": 0,	
-					"ProjectsNames": []
-				}`); err != nil {
-				return err
-			}
 		}
 	}
 
