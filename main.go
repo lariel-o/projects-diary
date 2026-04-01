@@ -15,13 +15,12 @@ func main() {
 		return 
 	}
 
-	data.AddNewProject(data.ProjectStructModel{
-		ProjectName: "Lucas", 
-		Description: "Ariel", 
-		Time: "93", 
-		Failed: false, 
-		ID: 0,
-	})
+	// data.AddNewProject(data.ProjectStructModel{
+	// 	ProjectName: "", 
+	// 	Description: "", 
+	// 	Time: "93", 
+	// 	Failed: false, 
+	// })
 
 	p := tea.NewProgram(display.Daishi{0})
 	if _, err := p.Run(); err != nil {

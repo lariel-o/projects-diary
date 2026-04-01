@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func readDB(database *WorldStructModel) error {
+func loadDatabase() error {
 	data, err := os.ReadFile(DatabaseInfo.FilesPath["main"])
 	if err != nil { return err }
 
@@ -14,11 +14,11 @@ func readDB(database *WorldStructModel) error {
 	err = json.Unmarshal(data, &db)
 	if err != nil { return err }
 
-	*database = db
+	DB = db
 	return nil
 }
 
-func WriteAtDatabase() error {
+func writeAtDatabase() error {
 	b, err := json.Marshal(DB)
 	if err != nil { return err }
 
@@ -30,14 +30,29 @@ func WriteAtDatabase() error {
 }
 
 func AddNewProject(project ProjectStructModel) error {
-	// [START] append project to db
-	project.ID = uint16(len(DB.World))
-	DB.World = append(DB.World, project)
-	// [END]
+	// Put the proper ID
+	project.ID = DB.ProjectsCount
 
-	WriteAtDatabase()
+	// Sum 1 in the count of projects
+	DB.ProjectsCount += 1
+
+	// Save the new DB at the volatile memory
+	DB.World = append(DB.World, project)
+
+	// Write the new DB at the non-volatile memory
+	if err := writeAtDatabase(); err != nil { return err }
 
 	return nil
 }
 
+// change the projects at the position src and dst
+func SwapProjects(src, dst uint16, permission bool) { 
+	if !permission {
+		return
+	}
+	save := DB.World[src]
+	DB.World[src] = DB.World[dst]
+	DB.World[dst] = save
+	writeAtDatabase()
+}
 

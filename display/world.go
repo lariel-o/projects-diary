@@ -1,51 +1,116 @@
 package display
 
-import tea "charm.land/bubbletea/v2"
-import "fmt"
+import( 
+	"fmt"
+
+	"github.com/lariel-o/projects-diary/data"
+
+	tea "charm.land/bubbletea/v2"
+)
+
 
 type world struct {
-	projectsTitle []string  
 	cursor uint16 
+
+	showingDescription uint16
+	isShowingDescription bool
+
+	isSwapingProject bool
 }
 
-var worldDisplay = world {[]string{"Lucas", "Ariel", "Oliveira", "Moreira"}, 0}
+var worldDisplay = world{0, 0, false, false}
 
 func (m world) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
 	case "q":
 		return tea.Quit
 
+	// move cursor up
 	case "k", "up":
 		if worldDisplay.cursor == 0 { 
-			worldDisplay.cursor = uint16(len(m.projectsTitle) - 1)
-			return nil
+			worldDisplay.cursor = uint16(data.DB.ProjectsCount - 1)
+
+			// try to swap if isSwaping is true
+			data.SwapProjects(0, worldDisplay.cursor, worldDisplay.isSwapingProject)
+		} else {
+			worldDisplay.cursor -= 1
+
+			// try to swap if isSwaping is true
+			data.SwapProjects(worldDisplay.cursor + 1, worldDisplay.cursor, worldDisplay.isSwapingProject)
 		}
-		worldDisplay.cursor -= 1
 		return nil
 	
+	// move cursor down
 	case "j", "down":
-		if worldDisplay.cursor == uint16(len(m.projectsTitle) - 1) {
+		if worldDisplay.cursor == uint16(data.DB.ProjectsCount - 1) {
 			worldDisplay.cursor = 0
-			return nil
+
+			// try to swap if isSwaping is true
+			data.SwapProjects(uint16(data.DB.ProjectsCount - 1), 0, worldDisplay.isSwapingProject)
+		} else {
+			worldDisplay.cursor += 1
+
+			// try to swap if isSwaping is true
+			data.SwapProjects(worldDisplay.cursor - 1, worldDisplay.cursor, worldDisplay.isSwapingProject)
 		}
-		worldDisplay.cursor += 1
+
 		return nil
+
+	// show description
+	case "l", "right":
+		worldDisplay.isShowingDescription = true
+		worldDisplay.showingDescription = worldDisplay.cursor
+		return nil
+	
+	// unshow description
+	case "h", "left":
+		worldDisplay.isShowingDescription = false
+
+	// active and un active the swaping mode
+	case "s":
+		worldDisplay.isSwapingProject = !worldDisplay.isSwapingProject
 	}
+
+
+
 
 	return nil
 }
 
 func (m world) view() string {
-	toReturn := ""
-	for i, j := range m.projectsTitle {
-		cursor := " "
-		content := j
+	// check if exist any project
+	if data.DB.ProjectsCount == 0 {
+		return "Nothing here"
+	}
 
-		if worldDisplay.cursor == uint16(i) {
+	toReturn := ""
+
+	// cursor* title 
+	for i := range data.DB.ProjectsCount {
+		swapingPadding := ""
+		cursor := " "
+		title := ""
+		description := ""
+
+		if m.isSwapingProject && m.cursor == i {
+			swapingPadding = "    "
+		}
+
+		// set cursor
+		if m.cursor == i {
 			cursor = ">"
 		}
-		
-		toReturn += fmt.Sprintf("%s %s\n", cursor, content)
+
+		// set description
+		// if is trying to swap don't allow to show description
+		if m.isShowingDescription && m.showingDescription == i && !m.isSwapingProject {
+			description = "\n        ~ " + data.DB.World[i].Description
+		}
+
+		// set title
+		title = data.DB.World[i].ProjectName
+
+		toReturn += fmt.Sprintf("%s%s %s%s\n", swapingPadding, cursor, title, description)
 	}
 
 	return toReturn

@@ -25,6 +25,7 @@ type ProjectStructModel struct {
 
 type WorldStructModel struct {
 	World []ProjectStructModel
+	ProjectsCount uint16
 }
 
 type databaseInfo struct  {

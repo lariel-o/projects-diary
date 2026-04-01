@@ -3,7 +3,6 @@ package data
 import (
 	"os"
 	auxs "github.com/lariel-o/projects-diary/auxiliaries"
-	"fmt"
 )
 
 func CreateProjectDir() error {
@@ -26,17 +25,17 @@ func CreateProjectDir() error {
 	return nil
 }
 
-// Initialize database in memory
-var DB = WorldStructModel{}
+// Initialize database at the volatile memory (local database)
+var DB = WorldStructModel{
+	ProjectsCount: 0,
+}
 
 func InitDatas() error {
 	// create the project dir to save the database
 	if err := CreateProjectDir(); err != nil { return err }
 
-	// fill the DB with datas
-	err := readDB(&DB)
-	if err != nil { return err }
-	fmt.Println(DB)
+	// fill the local DB with datas
+	if err := loadDatabase(); err != nil { return err }
 
 	return nil
 }
