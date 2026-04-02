@@ -33,8 +33,8 @@ func AddNewProject(project ProjectStructModel) error {
 	// Put the proper ID
 	project.ID = DB.ProjectsCount
 
-	// Sum 1 in the count of projects
-	DB.ProjectsCount += 1
+	// Sum 1 in the ProjectsCount indicating a new project is being added
+	DB.ProjectsCount++ 
 
 	// Save the new DB at the volatile memory
 	DB.World = append(DB.World, project)
@@ -55,4 +55,31 @@ func SwapProjects(src, dst uint16, permission bool) {
 	DB.World[dst] = save
 	writeAtDatabase()
 }
+
+func AddNewTask(tracer uint16, task TaskStructModel) error {
+	// set task ID
+	task.ID = DB.World[tracer].TasksCount	
+
+	// sum 1 at TasksCount indicating that a new task is being added
+	DB.World[tracer].TasksCount++
+
+	// add the new task to the db
+	DB.World[tracer].Tasks = append(DB.World[tracer].Tasks, task)
+
+	// write the new DB
+	if err := writeAtDatabase(); err != nil { return err }
+
+	return nil
+}
+
+func SwapTasks(src, dst, tracer uint16, permission bool) { 
+	if !permission {
+		return
+	}
+	save := DB.World[tracer].Tasks[src]
+	DB.World[tracer].Tasks[src] = DB.World[tracer].Tasks[dst]
+	DB.World[tracer].Tasks[dst] = save
+	writeAtDatabase()
+}
+
 

@@ -20,6 +20,7 @@ type ProjectStructModel struct {
 	Time string 
 	Failed bool 
 	Tasks [] TaskStructModel // List all the tasks
+	TasksCount uint16
 	ID uint16
 }
 

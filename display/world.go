@@ -8,7 +8,6 @@ import(
 	tea "charm.land/bubbletea/v2"
 )
 
-
 type world struct {
 	cursor uint16 
 
@@ -24,6 +23,22 @@ func (m world) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
 	case "q":
 		return tea.Quit
+
+	case "enter":
+		// set swap to false to avoid bugs
+		worldDisplay.isSwapingProject = false
+
+		// set the default struct of the project display (daishi will manage it well)
+		projectDisplay = project {
+			cursor: 0,
+			showingDescription: 0,
+			isShowingDescription: false,
+			isSwapingTask: false,
+			projectTracer: m.cursor,
+		}
+		
+		who = 1
+
 
 	// move cursor up
 	case "k", "up":

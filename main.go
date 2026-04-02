@@ -15,14 +15,14 @@ func main() {
 		return 
 	}
 
-	// data.AddNewProject(data.ProjectStructModel{
-	// 	ProjectName: "", 
-	// 	Description: "", 
+	// data.AddNewTask(2, data.TaskStructModel{
+	// 	Status: "ongoing",
+	// 	Content: "9854 quest of anyone",
 	// 	Time: "93", 
 	// 	Failed: false, 
 	// })
 
-	p := tea.NewProgram(display.Daishi{0})
+	p := tea.NewProgram(display.Daishi{})
 	if _, err := p.Run(); err != nil {
 		fmt.Println(err)
 		return 
