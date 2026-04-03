@@ -16,28 +16,38 @@ type deleteIt struct  {
 
 var deleteDisplay = deleteIt{0, 0, 0, false}
 
-func (m deleteIt) update(msg string, main *Daishi) tea.Cmd {
+func yes(m *deleteIt) {
+	if m.what == 0 {
+		data.RemoveProject(m.projectTracer)
+		worldDisplay.cursor = 0
+	} else if m.what == 1 {
+		data.RemoveTask(m.projectTracer, m.taskTracer)
+		projectDisplay.cursor = 0
+	}
+}
+
+func (m *deleteIt) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
 	case "enter":
 	 	if m.confirm {
-			if m.what == 0 {
-				data.RemoveProject(m.projectTracer)
-				worldDisplay.cursor = 0
-			} else if m.what == 1 {
-				data.RemoveTask(m.projectTracer, m.taskTracer)
-				projectDisplay.cursor = 0
-			}
+			yes(m)
 		}
 
 		main.who = main.lastOne
 		main.lastOne = 2
 
-	case "q":
+	case "y":
+		yes(m)
+
+		main.who = main.lastOne
+		main.lastOne = 2
+
+	case "q", "n", "N", "esc":
 		main.who = main.lastOne
 		main.lastOne = 2
 
 	case "l", "left", "h", "right":
-		deleteDisplay.confirm = !deleteDisplay.confirm	
+		m.confirm = !m.confirm	
 
 	}
 

@@ -19,14 +19,14 @@ type world struct {
 
 var worldDisplay = world{0, 0, false, false}
 
-func (m world) update(msg string, main *Daishi) tea.Cmd {
+func (m *world) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
 	case "q":
 		return tea.Quit
 
 	case "enter":
 		// set swap to false to avoid bugs
-		worldDisplay.isSwapingProject = false
+		m.isSwapingProject = false
 
 		// set the default struct of the project display (daishi will manage it well)
 		projectDisplay = project {
@@ -43,51 +43,51 @@ func (m world) update(msg string, main *Daishi) tea.Cmd {
 
 	// move cursor up
 	case "k", "up":
-		if worldDisplay.cursor == 0 { 
-			worldDisplay.cursor = uint16(data.DB.ProjectsCount - 1)
+		if m.cursor == 0 { 
+			m.cursor = uint16(data.DB.ProjectsCount - 1)
 
 			// try to swap if isSwaping is true
-			data.SwapProjects(0, worldDisplay.cursor, worldDisplay.isSwapingProject)
+			data.SwapProjects(0, m.cursor, m.isSwapingProject)
 		} else {
-			worldDisplay.cursor -= 1
+			m.cursor -= 1
 
 			// try to swap if isSwaping is true
-			data.SwapProjects(worldDisplay.cursor + 1, worldDisplay.cursor, worldDisplay.isSwapingProject)
+			data.SwapProjects(m.cursor + 1, m.cursor, m.isSwapingProject)
 		}
 		return nil
 	
 	// move cursor down
 	case "j", "down":
-		if worldDisplay.cursor == uint16(data.DB.ProjectsCount - 1) {
-			worldDisplay.cursor = 0
+		if m.cursor == uint16(data.DB.ProjectsCount - 1) {
+			m.cursor = 0
 
 			// try to swap if isSwaping is true
-			data.SwapProjects(uint16(data.DB.ProjectsCount - 1), 0, worldDisplay.isSwapingProject)
+			data.SwapProjects(uint16(data.DB.ProjectsCount - 1), 0, m.isSwapingProject)
 		} else {
-			worldDisplay.cursor += 1
+			m.cursor += 1
 
 			// try to swap if isSwaping is true
-			data.SwapProjects(worldDisplay.cursor - 1, worldDisplay.cursor, worldDisplay.isSwapingProject)
+			data.SwapProjects(m.cursor - 1, m.cursor, m.isSwapingProject)
 		}
 
 		return nil
 
 	// show description
 	case "l", "right":
-		worldDisplay.isShowingDescription = true
-		worldDisplay.showingDescription = worldDisplay.cursor
+		m.isShowingDescription = true
+		m.showingDescription = m.cursor
 		return nil
 	
 	// unshow description
 	case "h", "left":
-		worldDisplay.isShowingDescription = false
+		m.isShowingDescription = false
 
 	// active and un active the swaping mode
 	case "s":
-		worldDisplay.isSwapingProject = !worldDisplay.isSwapingProject
+		m.isSwapingProject = !m.isSwapingProject
 
 	case "d":
-		worldDisplay.isSwapingProject = false
+		m.isSwapingProject = false
 
 		deleteDisplay = deleteIt {
 			what: 0,

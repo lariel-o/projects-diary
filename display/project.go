@@ -21,7 +21,7 @@ type project struct {
 
 var projectDisplay = project{0, 0, false, false, 0}
 
-func (m project) update(msg string, main *Daishi) tea.Cmd {
+func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
 	case "q":
 		main.lastOne = main.who
@@ -29,51 +29,51 @@ func (m project) update(msg string, main *Daishi) tea.Cmd {
 
 	// move cursor up
 	case "k", "up":
-		if projectDisplay.cursor == 0 { 
-			projectDisplay.cursor = uint16(data.DB.World[m.projectTracer].TasksCount - 1)
+		if m.cursor == 0 { 
+			m.cursor = uint16(data.DB.World[m.projectTracer].TasksCount - 1)
 
 			// try to swap if isSwaping is true
-			data.SwapTasks(0, projectDisplay.cursor, m.projectTracer, projectDisplay.isSwapingTask)
+			data.SwapTasks(0, m.cursor, m.projectTracer, m.isSwapingTask)
 		} else {
-			projectDisplay.cursor -= 1
+			m.cursor -= 1
 
 			// try to swap if isSwaping is true
-			data.SwapTasks(projectDisplay.cursor + 1, projectDisplay.cursor, m.projectTracer, projectDisplay.isSwapingTask)
+			data.SwapTasks(m.cursor + 1, m.cursor, m.projectTracer, m.isSwapingTask)
 		}
 		return nil
 	
 	// move cursor down
 	case "j", "down":
-		if projectDisplay.cursor == uint16(data.DB.World[m.projectTracer].TasksCount - 1) {
-			projectDisplay.cursor = 0
+		if m.cursor == uint16(data.DB.World[m.projectTracer].TasksCount - 1) {
+			m.cursor = 0
 
 			// try to swap if isSwaping is true
-			data.SwapTasks(uint16(data.DB.World[m.projectTracer].TasksCount - 1), 0, m.projectTracer, projectDisplay.isSwapingTask)
+			data.SwapTasks(uint16(data.DB.World[m.projectTracer].TasksCount - 1), 0, m.projectTracer, m.isSwapingTask)
 		} else {
-			projectDisplay.cursor += 1
+			m.cursor += 1
 
 			// try to swap if isSwaping is true
-			data.SwapTasks(projectDisplay.cursor - 1, projectDisplay.cursor, m.projectTracer, projectDisplay.isSwapingTask)
+			data.SwapTasks(m.cursor - 1, m.cursor, m.projectTracer, m.isSwapingTask)
 		}
 
 		return nil
 
 	// show description
 	case "l", "right":
-		projectDisplay.isShowingDescription = true
-		projectDisplay.showingDescription = projectDisplay.cursor
+		m.isShowingDescription = true
+		m.showingDescription = m.cursor
 		return nil
 	
 	// unshow description
 	case "h", "left":
-		projectDisplay.isShowingDescription = false
+		m.isShowingDescription = false
 
 	// active and un active the swaping mode
 	case "s":
-		projectDisplay.isSwapingTask = !projectDisplay.isSwapingTask
+		m.isSwapingTask = !m.isSwapingTask
 
 	case "d":
-		projectDisplay.isSwapingTask = false
+		m.isSwapingTask = false
 
 		deleteDisplay = deleteIt {
 			what: 1,
