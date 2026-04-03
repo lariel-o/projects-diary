@@ -22,6 +22,7 @@ func main() {
 	// 	Failed: false, 
 	// })
 
+	// initalize the program
 	p := tea.NewProgram(display.Daishi{})
 	if _, err := p.Run(); err != nil {
 		fmt.Println(err)

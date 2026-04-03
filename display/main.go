@@ -2,27 +2,34 @@ package display
 
 import tea "charm.land/bubbletea/v2"
 
-// This variable save the current view display who is supposed to be renderezided
-var who uint8
-
 type Daishi struct {
+	who uint8
+	lastOne uint8
+
+	// This variable save the current view display who is supposed to be renderezided
+	// 0 - World
+	// 1 - Project
+	// 2 - Delete
 } 
 
 func (m Daishi) Init() tea.Cmd {
-	who = 0
+	m.who = 0
+	m.lastOne = 0
 	return nil
 }
 
 func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyPressMsg:
-		switch who {
+		switch m.who {
 		case 0:
-			// the update function at worlddisplay will deal with everything
 			return m, worldDisplay.update(msg.String(), &m)	
 
 		case 1:
 			return m, projectDisplay.update(msg.String(), &m)
+
+		case 2:
+			return m, deleteDisplay.update(msg.String(), &m)
 		}
 	}
 
@@ -32,12 +39,15 @@ func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Daishi) View() tea.View {
 	s := ""
 
-	switch who {
+	switch m.who {
 	case 0:
 		s = worldDisplay.view()
 
 	case 1:
 		s = projectDisplay.view()
+
+	case 2:
+		s = deleteDisplay.view()
 	}
 
 	return tea.NewView(s)

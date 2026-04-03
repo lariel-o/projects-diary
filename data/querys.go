@@ -45,6 +45,44 @@ func AddNewProject(project ProjectStructModel) error {
 	return nil
 }
 
+func RemoveProject(src uint16) error {
+	newWorld := make([]ProjectStructModel, DB.ProjectsCount - 1)
+
+	count := 0
+	for i := range DB.ProjectsCount {
+		if i == src {
+			continue
+		}
+
+		newWorld[count] = DB.World[i]
+		count++
+	}
+
+	DB.World = newWorld
+	DB.ProjectsCount--
+	if err := writeAtDatabase(); err != nil { return err }
+	return nil
+}
+
+func RemoveTask(src1, src2 uint16) error {
+	newTasks := make([]TaskStructModel, DB.World[src1].TasksCount - 1)
+
+	count := 0
+	for i := range DB.World[src1].TasksCount {
+		if i == src2 {
+			continue
+		}
+
+		newTasks[count] = DB.World[src1].Tasks[i]
+		count++
+	}
+
+	DB.World[src1].Tasks = newTasks
+	DB.World[src1].TasksCount--
+	if err := writeAtDatabase(); err != nil { return err }
+	return nil
+}
+
 // change the projects at the position src and dst
 func SwapProjects(src, dst uint16, permission bool) { 
 	if !permission {

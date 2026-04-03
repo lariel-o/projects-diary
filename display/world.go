@@ -37,7 +37,8 @@ func (m world) update(msg string, main *Daishi) tea.Cmd {
 			projectTracer: m.cursor,
 		}
 		
-		who = 1
+		main.lastOne = main.who
+		main.who = 1
 
 
 	// move cursor up
@@ -84,10 +85,20 @@ func (m world) update(msg string, main *Daishi) tea.Cmd {
 	// active and un active the swaping mode
 	case "s":
 		worldDisplay.isSwapingProject = !worldDisplay.isSwapingProject
+
+	case "d":
+		worldDisplay.isSwapingProject = false
+
+		deleteDisplay = deleteIt {
+			what: 0,
+			projectTracer: m.cursor,
+			taskTracer: 0,
+			confirm: false,
+		}
+		
+		main.lastOne = main.who
+		main.who = 2
 	}
-
-
-
 
 	return nil
 }
