@@ -71,9 +71,20 @@ func (m project) update(msg string, main *Daishi) tea.Cmd {
 	// active and un active the swaping mode
 	case "s":
 		projectDisplay.isSwapingTask = !projectDisplay.isSwapingTask
+
+	case "d":
+		projectDisplay.isSwapingTask = false
+
+		deleteDisplay = deleteIt {
+			what: 1,
+			projectTracer: m.projectTracer,
+			taskTracer: m.cursor,
+			confirm: false,
+		}
+		
+		main.lastOne = main.who
+		main.who = 2
 	}
-
-
 
 
 	return nil
