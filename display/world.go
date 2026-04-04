@@ -64,7 +64,7 @@ func (m *world) update(msg string, main *Daishi) tea.Cmd {
 			// try to swap if isSwaping is true
 			data.SwapProjects(uint16(data.DB.ProjectsCount - 1), 0, m.isSwapingProject)
 		} else {
-			m.cursor += 1
+			m.cursor++
 
 			// try to swap if isSwaping is true
 			data.SwapProjects(m.cursor - 1, m.cursor, m.isSwapingProject)
@@ -98,6 +98,11 @@ func (m *world) update(msg string, main *Daishi) tea.Cmd {
 		
 		main.lastOne = main.who
 		main.who = 2
+
+	case "c":
+		m.isSwapingProject = false
+		main.lastOne = main.who
+		main.who = 3
 	}
 
 	return nil
