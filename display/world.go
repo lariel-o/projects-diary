@@ -99,7 +99,7 @@ func (m *world) update(msg string, main *Daishi) tea.Cmd {
 		main.lastOne = main.who
 		main.who = 2
 
-	case "c":
+	case "a":
 		m.isSwapingProject = false
 		main.lastOne = main.who
 		main.who = 3

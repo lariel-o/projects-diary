@@ -84,6 +84,13 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 		
 		main.lastOne = main.who
 		main.who = 2
+
+	case "a":
+		m.isSwapingTask = false
+		main.lastOne = main.who
+		main.who = 4
+
+		addTaskDisplay.tracer = m.projectTracer
 	}
 
 

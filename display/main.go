@@ -18,7 +18,8 @@ func (m Daishi) Init() tea.Cmd {
 	m.who = 0
 	m.lastOne = 0
 
-	createProjectDisplay.init()
+	addProjectDisplay.init()
+	addTaskDisplay.init()
 
 	return nil
 }
@@ -37,7 +38,10 @@ func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, deleteDisplay.update(msg.String(), &m)
 		
 		case 3:
-			return m, createProjectDisplay.update(msg.String(), msg, &m)
+			return m, addProjectDisplay.update(msg.String(), msg, &m)
+		
+		case 4:
+			return m, addTaskDisplay.update(msg.String(), msg, &m)
 
 		}
 	}
@@ -60,7 +64,10 @@ func (m Daishi) View() tea.View {
 		s = deleteDisplay.view()
 
 	case 3:
-		s, c = createProjectDisplay.view()
+		s, c = addProjectDisplay.view()
+
+	case 4:
+		s, c = addTaskDisplay.view()
 	}
 	v := tea.NewView(s)
 	v.Cursor = c

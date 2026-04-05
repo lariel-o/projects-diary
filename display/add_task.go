@@ -9,17 +9,18 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-type createProject struct {
+type addTask struct {
 	inputs []textinput.Model
 	texts []string
+	tracer uint16
 	cursor uint8
 	inputsCount uint8
 }
 
-var createProjectDisplay = createProject{[]textinput.Model{}, []string{}, 0, 0}
+var addTaskDisplay = addTask{[]textinput.Model{}, []string{}, 0, 0, 0}
 
-func (m *createProject) init() {
-	m.inputsCount = 2
+func (m *addTask) init() {
+	m.inputsCount = 1
 
 	m.inputs = make([]textinput.Model, m.inputsCount)
 	m.texts = make([]string, m.inputsCount)
@@ -35,30 +36,24 @@ func (m *createProject) init() {
 			t.Focus() 
 			m.inputs[i] = t
 
-			m.texts[i] = "Project name"
-
-		case 1:
-			m.inputs[i] = t
-			m.texts[i] = "Project description"
-			m.inputs[i].Blur()
+			m.texts[i] = "Task content"
 		}
 	}
 }
 
-func (m *createProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
+func (m *addTask) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	switch msg {
 	case "enter":
-		data.AddNewProject(data.ProjectStructModel{
-			ProjectName: m.inputs[0].Value(),
-			Description: m.inputs[1].Value(),
+		data.AddNewTask(m.tracer, data.TaskStructModel{
+			Content: m.inputs[0].Value(),
 		})
 	
 		main.who = main.lastOne
-		main.lastOne = 3
+		main.lastOne = 4
 
 	case "ctrl+c", "esc":
 		main.who = main.lastOne
-		main.lastOne = 3
+		main.lastOne = 4
 	
 	case "down", "shift+tab":
 		if m.cursor == m.inputsCount - 1 {
@@ -89,7 +84,7 @@ func (m *createProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cm
 	return nil
 }
 
-func (m createProject) view() (string, *tea.Cursor) {
+func (m addTask) view() (string, *tea.Cursor) {
 	var c *tea.Cursor
 
 	toReturn := ""
