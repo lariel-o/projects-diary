@@ -49,18 +49,23 @@ func (m *addTask) init() {
 func (m *addTask) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	switch msg {
 	case "enter":
-		data.AddNewTask(m.tracer, data.TaskStructModel{
-			Content: m.inputs[0].Value(),
-		})
+		// don't allow to create tasks with empty content
+		if m.inputs[0].Value() != "" {
+			data.AddNewTask(m.tracer, data.TaskStructModel{
+				Content: m.inputs[0].Value(),
+			})
+		
+			main.who = main.lastOne
+			main.lastOne = 4
+
+			eraseTasksInput()
+		}
 	
+	case "ctrl+c", "esc":
 		main.who = main.lastOne
 		main.lastOne = 4
 
 		eraseTasksInput()
-
-	case "ctrl+c", "esc":
-		main.who = main.lastOne
-		main.lastOne = 4
 	
 	case "down", "shift+tab":
 		if m.cursor == m.inputsCount - 1 {

@@ -23,7 +23,7 @@ var projectDisplay = project{0, 0, false, false, 0}
 
 func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
-	case "q":
+	case "q", "esc":
 		main.lastOne = main.who
 		main.who = 0
 

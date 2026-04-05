@@ -55,19 +55,24 @@ func (m *addProject) init() {
 func (m *addProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	switch msg {
 	case "enter":
-		data.AddNewProject(data.ProjectStructModel{
-			ProjectName: m.inputs[0].Value(),
-			Description: m.inputs[1].Value(),
-		})
-	
-		main.who = main.lastOne
-		main.lastOne = 3
+		// don't allow to create projects with empty title
+		if m.inputs[0].Value() != "" {
+			data.AddNewProject(data.ProjectStructModel{
+				ProjectName: m.inputs[0].Value(),
+				Description: m.inputs[1].Value(),
+			})
+		
+			main.who = main.lastOne
+			main.lastOne = 3
 
-		eraseProjectsInput()
+			eraseProjectsInput()
+		} 
 
 	case "ctrl+c", "esc":
 		main.who = main.lastOne
 		main.lastOne = 3
+
+		eraseProjectsInput()
 	
 	case "down", "shift+tab":
 		if m.cursor == m.inputsCount - 1 {

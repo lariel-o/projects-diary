@@ -30,10 +30,6 @@ func (m *editProject) setDefaultValues() {
 	}
 }
 
-func eraseProjectsEditInput() {
-	editProjectDisplay.init()
-}
-
 func (m *editProject) init() {
 	// format
 	editProjectDisplay = editProject{[]textinput.Model{}, []string{}, 0, 0, 0}
@@ -72,8 +68,6 @@ func (m *editProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd 
 	
 		main.who = main.lastOne
 		main.lastOne = 5
-
-		eraseProjectsEditInput()
 
 	case "ctrl+c", "esc":
 		main.who = main.lastOne

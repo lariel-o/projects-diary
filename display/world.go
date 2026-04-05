@@ -21,7 +21,7 @@ var worldDisplay = world{0, 0, false, false}
 
 func (m *world) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
-	case "q":
+	case "q", "esc":
 		return tea.Quit
 
 	case "enter":
