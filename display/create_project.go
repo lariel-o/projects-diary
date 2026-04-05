@@ -9,16 +9,16 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-type create struct {
+type createProject struct {
 	inputs []textinput.Model
 	texts []string
 	cursor uint8
 	inputsCount uint8
 }
 
-var createDisplay = create{[]textinput.Model{}, []string{}, 0, 0}
+var createProjectDisplay = createProject{[]textinput.Model{}, []string{}, 0, 0}
 
-func (m *create) init() {
+func (m *createProject) init() {
 	m.inputsCount = 2
 
 	m.inputs = make([]textinput.Model, m.inputsCount)
@@ -45,7 +45,7 @@ func (m *create) init() {
 	}
 }
 
-func (m *create) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
+func (m *createProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	switch msg {
 	case "enter":
 		data.AddNewProject(data.ProjectStructModel{
@@ -89,7 +89,7 @@ func (m *create) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	return nil
 }
 
-func (m create) view() (string, *tea.Cursor) {
+func (m createProject) view() (string, *tea.Cursor) {
 	var c *tea.Cursor
 
 	toReturn := ""

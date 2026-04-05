@@ -135,7 +135,7 @@ func (m world) view() string {
 		// set description
 		// if is trying to swap don't allow to show description
 		if m.isShowingDescription && m.showingDescription == i && !m.isSwapingProject {
-			description = "\n        ~ " + data.DB.World[i].Description
+			description = "\n    ~ " + data.DB.World[i].Description
 		}
 
 		// set title

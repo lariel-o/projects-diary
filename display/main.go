@@ -10,14 +10,15 @@ type Daishi struct {
 	// 0 - World
 	// 1 - Project
 	// 2 - Delete
-	// 3 - Create
+	// 3 - Create projects
+	// 4 - Create tasks
 } 
 
 func (m Daishi) Init() tea.Cmd {
 	m.who = 0
 	m.lastOne = 0
 
-	createDisplay.init()
+	createProjectDisplay.init()
 
 	return nil
 }
@@ -36,7 +37,7 @@ func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, deleteDisplay.update(msg.String(), &m)
 		
 		case 3:
-			return m, createDisplay.update(msg.String(), msg, &m)
+			return m, createProjectDisplay.update(msg.String(), msg, &m)
 
 		}
 	}
@@ -59,7 +60,7 @@ func (m Daishi) View() tea.View {
 		s = deleteDisplay.view()
 
 	case 3:
-		s, c = createDisplay.view()
+		s, c = createProjectDisplay.view()
 	}
 	v := tea.NewView(s)
 	v.Cursor = c
