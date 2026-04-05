@@ -99,12 +99,23 @@ func (m *world) update(msg string, main *Daishi) tea.Cmd {
 
 			main.lastOne = main.who
 			main.who = 2
+			m.isSwapingProject = false
 		}
 
 	case "a":
 		m.isSwapingProject = false
 		main.lastOne = main.who
 		main.who = 3
+
+	case "e":
+		if data.DB.ProjectsCount != 0 {
+			editProjectDisplay.tracer = m.cursor
+			editProjectDisplay.setDefaultValues()
+
+			main.lastOne = main.who
+			main.who = 5
+			m.isSwapingProject = false
+		}
 	}
 
 	return nil

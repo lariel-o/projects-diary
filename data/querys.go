@@ -64,6 +64,41 @@ func RemoveProject(src uint16) error {
 	return nil
 }
 
+// change projects at the position src and dst
+func SwapProjects(src, dst uint16, permission bool) { 
+	if !permission {
+		return
+	}
+	save := DB.World[src]
+	DB.World[src] = DB.World[dst]
+	DB.World[dst] = save
+	writeAtDatabase()
+}
+
+func EditProject(n, d string, tracer uint16) error {
+	DB.World[tracer].ProjectName = n
+	DB.World[tracer].Description = d
+
+	if err := writeAtDatabase(); err != nil { return err }
+	return nil
+}
+
+func AddNewTask(tracer uint16, task TaskStructModel) error {
+	// set task ID
+	task.ID = DB.World[tracer].TasksCount	
+
+	// sum 1 at TasksCount indicating that a new task is being added
+	DB.World[tracer].TasksCount++
+
+	// add the new task to the db
+	DB.World[tracer].Tasks = append(DB.World[tracer].Tasks, task)
+
+	// write the new DB
+	if err := writeAtDatabase(); err != nil { return err }
+
+	return nil
+}
+
 func RemoveTask(src1, src2 uint16) error {
 	newTasks := make([]TaskStructModel, DB.World[src1].TasksCount - 1)
 
@@ -83,33 +118,7 @@ func RemoveTask(src1, src2 uint16) error {
 	return nil
 }
 
-// change the projects at the position src and dst
-func SwapProjects(src, dst uint16, permission bool) { 
-	if !permission {
-		return
-	}
-	save := DB.World[src]
-	DB.World[src] = DB.World[dst]
-	DB.World[dst] = save
-	writeAtDatabase()
-}
-
-func AddNewTask(tracer uint16, task TaskStructModel) error {
-	// set task ID
-	task.ID = DB.World[tracer].TasksCount	
-
-	// sum 1 at TasksCount indicating that a new task is being added
-	DB.World[tracer].TasksCount++
-
-	// add the new task to the db
-	DB.World[tracer].Tasks = append(DB.World[tracer].Tasks, task)
-
-	// write the new DB
-	if err := writeAtDatabase(); err != nil { return err }
-
-	return nil
-}
-
+// change tasks at the position src and dst where the project have id tracer
 func SwapTasks(src, dst, tracer uint16, permission bool) { 
 	if !permission {
 		return
@@ -120,4 +129,9 @@ func SwapTasks(src, dst, tracer uint16, permission bool) {
 	writeAtDatabase()
 }
 
+func EditTask(c string, pTracer, tTracer uint16) error {
+	DB.World[pTracer].Tasks[tTracer].Content = c
+	if err := writeAtDatabase(); err != nil { return err }
+	return nil
+}
 
