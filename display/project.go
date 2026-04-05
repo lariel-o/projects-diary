@@ -75,15 +75,17 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	case "d":
 		m.isSwapingTask = false
 
-		deleteDisplay = deleteIt {
-			what: 1,
-			projectTracer: m.projectTracer,
-			taskTracer: m.cursor,
-			confirm: false,
+		if data.DB.World[m.projectTracer].TasksCount != 0 {
+			deleteDisplay = deleteIt {
+				what: 1,
+				projectTracer: m.projectTracer,
+				taskTracer: m.cursor,
+				confirm: false,
+			}
+
+			main.lastOne = main.who
+			main.who = 2
 		}
-		
-		main.lastOne = main.who
-		main.who = 2
 
 	case "a":
 		m.isSwapingTask = false

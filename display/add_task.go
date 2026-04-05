@@ -17,7 +17,12 @@ type addTask struct {
 	inputsCount uint8
 }
 
-var addTaskDisplay = addTask{[]textinput.Model{}, []string{}, 0, 0, 0}
+var addTaskDisplay = addTask{}
+
+func eraseTasksInput() {
+	addTaskDisplay = addTask{[]textinput.Model{}, []string{}, 0, 0, 0}
+	addTaskDisplay.init()
+}
 
 func (m *addTask) init() {
 	m.inputsCount = 1
@@ -50,6 +55,8 @@ func (m *addTask) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	
 		main.who = main.lastOne
 		main.lastOne = 4
+
+		eraseTasksInput()
 
 	case "ctrl+c", "esc":
 		main.who = main.lastOne

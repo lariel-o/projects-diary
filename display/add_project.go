@@ -16,9 +16,16 @@ type addProject struct {
 	inputsCount uint8
 }
 
-var addProjectDisplay = addProject{[]textinput.Model{}, []string{}, 0, 0}
+var addProjectDisplay = addProject{}
+
+func eraseProjectsInput() {
+	addProjectDisplay.init()
+}
 
 func (m *addProject) init() {
+	// format
+	addProjectDisplay = addProject{[]textinput.Model{}, []string{}, 0, 0}
+
 	m.inputsCount = 2
 
 	m.inputs = make([]textinput.Model, m.inputsCount)
@@ -55,6 +62,8 @@ func (m *addProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	
 		main.who = main.lastOne
 		main.lastOne = 3
+
+		eraseProjectsInput()
 
 	case "ctrl+c", "esc":
 		main.who = main.lastOne
