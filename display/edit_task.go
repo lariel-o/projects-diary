@@ -9,32 +9,31 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-type editProject struct {
+type editTask struct {
 	inputs []textinput.Model
 	texts []string
-	tracer uint16
+	projectTracer uint16
+	taskTracer uint16
 	cursor uint8
 	inputsCount uint8
 }
 
-var editProjectDisplay = editProject{}
+var editTaskDisplay = editTask{}
 
-func (m *editProject) setDefaultValues() {
+func (m *editTask) setDefaultValues() {
 	for i := range m.inputsCount {
 		switch i {
 		case 0:
-			m.inputs[i].SetValue(data.DB.World[m.tracer].ProjectName)
-		case 1:
-			m.inputs[i].SetValue(data.DB.World[m.tracer].Description)
+			m.inputs[i].SetValue(data.DB.World[m.projectTracer].Tasks[m.taskTracer].Content)
 		}
 	}
 }
 
-func (m *editProject) init() {
+func (m *editTask) init() {
 	// format
-	editProjectDisplay = editProject{[]textinput.Model{}, []string{}, 0, 0, 0}
+	editTaskDisplay = editTask{[]textinput.Model{}, []string{}, 0, 0, 0, 0}
 
-	m.inputsCount = 2
+	m.inputsCount = 1
 
 	m.inputs = make([]textinput.Model, m.inputsCount)
 	m.texts = make([]string, m.inputsCount)
@@ -50,22 +49,16 @@ func (m *editProject) init() {
 			t.Focus() 
 			m.inputs[i] = t
 
-			m.texts[i] = "Project name"
-
-		case 1:
-			m.inputs[i] = t
-			m.inputs[i].Blur()
-
-			m.texts[i] = "Project description"
+			m.texts[i] = "Task content"
 		}
 	}
 }
 
-func (m *editProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
+func (m *editTask) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	switch msg {
 	case "enter":
 		if m.inputs[0].Value() != "" {
-			data.EditProject(m.inputs[0].Value(), m.inputs[1].Value(), m.tracer)
+			data.EditTask(m.inputs[0].Value(), m.projectTracer, m.taskTracer)
 		
 			main.who = main.lastOne
 			main.lastOne = 5
@@ -104,7 +97,7 @@ func (m *editProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd 
 	return nil
 }
 
-func (m editProject) view() (string, *tea.Cursor) {
+func (m editTask) view() (string, *tea.Cursor) {
 	var c *tea.Cursor
 
 	toReturn := ""

@@ -13,6 +13,7 @@ type Daishi struct {
 	// 3 - Create projects
 	// 4 - Create tasks
 	// 5 - Edit projects
+	// 6 - Edit tasks
 } 
 
 func (m Daishi) Init() tea.Cmd {
@@ -22,6 +23,7 @@ func (m Daishi) Init() tea.Cmd {
 	addProjectDisplay.init()
 	addTaskDisplay.init()
 	editProjectDisplay.init()
+	editTaskDisplay.init()
 
 	return nil
 }
@@ -47,6 +49,9 @@ func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case 5:
 			return m, editProjectDisplay.update(msg.String(), msg, &m)
+
+		case 6:
+			return m, editTaskDisplay.update(msg.String(), msg, &m)
 
 		}
 	}
@@ -76,6 +81,9 @@ func (m Daishi) View() tea.View {
 
 	case 5:
 		s, c = editProjectDisplay.view()
+
+	case 6:
+		s, c = editTaskDisplay.view()
 	}
 	v := tea.NewView(s)
 	v.Cursor = c
