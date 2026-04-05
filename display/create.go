@@ -3,6 +3,8 @@ package display
 import (
 	"fmt"
 
+	"github.com/lariel-o/projects-diary/data"
+
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
 )
@@ -17,34 +19,48 @@ type create struct {
 var createDisplay = create{[]textinput.Model{}, []string{}, 0, 0}
 
 func (m *create) init() {
-	m.inputsCount = 1
+	m.inputsCount = 2
 
 	m.inputs = make([]textinput.Model, m.inputsCount)
 	m.texts = make([]string, m.inputsCount)
 
 	t := textinput.New()
+	t.Prompt = "⤷ "
+	t.CharLimit = 120
+	t.SetWidth(90)
 
 	for i := range m.inputsCount {
 		switch i {
 		case 0:
-			t.Prompt = "⤷ "
-			t.Placeholder = "Task name" 
 			t.Focus() 
-			t.CharLimit = 120
-			t.SetWidth(90)
 			m.inputs[i] = t
 
-			m.texts[i] = "Type the task name here"
+			m.texts[i] = "Project name"
+
+		case 1:
+			m.inputs[i] = t
+			m.texts[i] = "Project description"
+			m.inputs[i].Blur()
 		}
 	}
 }
 
 func (m *create) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 	switch msg {
-	case "ctrl+c", "esc":
-		return tea.Quit
+	case "enter":
+		data.AddNewProject(data.ProjectStructModel{
+			ProjectName: m.inputs[0].Value(),
+			Description: m.inputs[1].Value(),
+		})
 	
-	case "down":
+		main.who = main.lastOne
+		main.lastOne = 3
+
+	case "ctrl+c", "esc":
+		main.who = main.lastOne
+		main.lastOne = 3
+	
+	case "down", "shift+tab":
 		if m.cursor == m.inputsCount - 1 {
 			m.cursor = 0
 			m.inputs[m.inputsCount - 1].Blur()
@@ -55,7 +71,7 @@ func (m *create) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 
 		m.inputs[m.cursor].Focus()
 
-	case "up":
+	case "up", "tab":
 		if m.cursor == 0 {
 			m.cursor = m.inputsCount - 1
 			m.inputs[0].Blur()
@@ -86,7 +102,7 @@ func (m create) view() (string, *tea.Cursor) {
 		}
 
 		// create the str to be returned
-		toReturn += fmt.Sprintf("%s\n%s\n", m.texts[i], m.inputs[i].View())
+		toReturn += fmt.Sprintf("%s\n%s\n\n", m.texts[i], m.inputs[i].View())
 	}
 
 	return toReturn, c
