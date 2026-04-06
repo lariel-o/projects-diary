@@ -15,13 +15,6 @@ func main() {
 		return 
 	}
 
-	// data.AddNewTask(2, data.TaskStructModel{
-	// 	Status: "ongoing",
-	// 	Content: "9854 quest of anyone",
-	// 	Time: "93", 
-	// 	Failed: false, 
-	// })
-
 	// initalize the program
 	p := tea.NewProgram(display.Daishi{})
 	if _, err := p.Run(); err != nil {

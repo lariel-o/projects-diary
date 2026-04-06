@@ -31,10 +31,11 @@ func writeAtDatabase() error {
 
 func AddNewProject(project ProjectStructModel) error {
 	// Put the proper ID
-	project.ID = DB.ProjectsCount
+	project.ID = DB.LastProjectID
 
 	// Sum 1 in the ProjectsCount indicating a new project is being added
 	DB.ProjectsCount++ 
+	DB.LastProjectID++
 
 	// Save the new DB at the volatile memory
 	DB.World = append(DB.World, project)
@@ -85,10 +86,11 @@ func EditProject(n, d string, tracer uint16) error {
 
 func AddNewTask(tracer uint16, task TaskStructModel) error {
 	// set task ID
-	task.ID = DB.World[tracer].TasksCount	
+	task.ID = DB.World[tracer].TasksCount
 
 	// sum 1 at TasksCount indicating that a new task is being added
 	DB.World[tracer].TasksCount++
+	DB.World[tracer].LastTaskID++
 
 	// add the new task to the db
 	DB.World[tracer].Tasks = append(DB.World[tracer].Tasks, task)

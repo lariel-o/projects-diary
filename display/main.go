@@ -85,6 +85,7 @@ func (m Daishi) View() tea.View {
 	case 6:
 		s, c = editTaskDisplay.view()
 	}
+
 	v := tea.NewView(s)
 	v.Cursor = c
 	return v

@@ -21,12 +21,14 @@ type ProjectStructModel struct {
 	Failed bool 
 	Tasks [] TaskStructModel // List all the tasks
 	TasksCount uint16
+	LastTaskID uint16
 	ID uint16
 }
 
 type WorldStructModel struct {
 	World []ProjectStructModel
 	ProjectsCount uint16
+	LastProjectID uint16
 }
 
 type databaseInfo struct  {

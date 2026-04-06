@@ -6,6 +6,9 @@ import(
 	"github.com/lariel-o/projects-diary/data"
 
 	tea "charm.land/bubbletea/v2"
+
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
 )
 
 type world struct {
@@ -16,6 +19,8 @@ type world struct {
 
 	isSwapingProject bool
 }
+
+var headers = []string{"ID", "Project Name", "Description", "Created at"}
 
 var worldDisplay = world{0, 0, false, false}
 
@@ -127,36 +132,42 @@ func (m world) view() string {
 		return "Nothing here"
 	}
 
-	toReturn := ""
-
-	// cursor* title 
-	for i := range data.DB.ProjectsCount {
-		swapingPadding := ""
-		cursor := " "
-		title := ""
-		description := ""
-
-		if m.isSwapingProject && m.cursor == i {
-			swapingPadding = "    "
-		}
-
-		// set cursor
-		if m.cursor == i {
-			cursor = ">"
-		}
-
-		// set description
-		// if is trying to swap don't allow to show description
-		if m.isShowingDescription && m.showingDescription == i && !m.isSwapingProject {
-			description = "\n    ~ " + data.DB.World[i].Description
-		}
-
-		// set title
-		title = data.DB.World[i].ProjectName
-
-		toReturn += fmt.Sprintf("%s%s %s%s\n", swapingPadding, cursor, title, description)
+	if m.isShowingDescription {
+		return fmt.Sprintf("%s\n⤷ %s", 
+			data.DB.World[m.cursor].ProjectName,
+			data.DB.World[m.cursor].Description)
 	}
 
-	return toReturn
+	rows := make([][]string, data.DB.ProjectsCount)
+	for i := range data.DB.ProjectsCount {
+		rows[i] = []string{
+			fmt.Sprint(data.DB.World[i].ID),
+			data.DB.World[i].ProjectName + "\nhoho",
+			data.DB.World[i].Description,
+			"0000",
+		}
+	}
+
+	t := table.New().Headers(headers...).Rows(rows...).
+		Border(lipgloss.NormalBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground( lipgloss.Color("99") )).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			switch {
+			case row == table.HeaderRow:
+				return lipgloss.NewStyle().Align(lipgloss.Center).Padding(0, 2, 0, 2)
+
+			case uint16(row) == m.cursor && !m.isSwapingProject:
+				return lipgloss.NewStyle().Background( lipgloss.Color("203") ).Align(lipgloss.Center)
+
+			case uint16(row) == m.cursor && m.isSwapingProject:
+				return lipgloss.NewStyle().Background( lipgloss.Color("203") ).Align(lipgloss.Right)
+
+
+			default:
+				return lipgloss.NewStyle().Align(lipgloss.Center)
+			}
+		})
+
+	return lipgloss.Sprint(t)
 }
 
