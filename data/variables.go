@@ -1,6 +1,9 @@
 package data
 
-import "os"
+import (
+	"os"
+	"time"
+)
 
 var userHome, _ = os.UserHomeDir()
 var DatabasePath = userHome + "/.config/projects-diary"
@@ -17,12 +20,17 @@ type TaskStructModel struct {
 type ProjectStructModel struct {
 	ProjectName string
 	Description string
-	Time string 
-	Failed bool 
+
+	CreatedAt time.Time
+	ExpireAt time.Time
+	HaveExpireTime bool
+
 	Tasks [] TaskStructModel // List all the tasks
+
+	ID uint16
+
 	TasksCount uint16
 	LastTaskID uint16
-	ID uint16
 }
 
 type WorldStructModel struct {

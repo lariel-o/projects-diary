@@ -2,6 +2,7 @@ package display
 
 import( 
 	"fmt"
+	"time"
 
 	"github.com/lariel-o/projects-diary/data"
 
@@ -20,7 +21,7 @@ type world struct {
 	isSwapingProject bool
 }
 
-var headers = []string{"ID", "Project Name", "Description", "Created at"}
+var headers = []string{"ID", "Project Name", "Description", "Expires in"}
 
 var worldDisplay = world{0, 0, false, false}
 
@@ -140,11 +141,18 @@ func (m world) view() string {
 
 	rows := make([][]string, data.DB.ProjectsCount)
 	for i := range data.DB.ProjectsCount {
+		expireIn := ""
+
+		// set the expire time if it exist
+		if data.DB.World[i].HaveExpireTime {
+			s := data.DB.World[i].ExpireAt.Sub(time.Now())
+			expireIn = fmt.Sprintf("%dh%dm", int(s.Hours()), int(s.Minutes()) - int(s.Hours())*60)
+		}
 		rows[i] = []string{
 			fmt.Sprint(data.DB.World[i].ID),
-			data.DB.World[i].ProjectName + "\nhoho",
+			data.DB.World[i].ProjectName,
 			data.DB.World[i].Description,
-			"0000",
+			expireIn,
 		}
 	}
 

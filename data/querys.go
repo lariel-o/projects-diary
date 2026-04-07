@@ -3,6 +3,7 @@ package data
 import (
 	"encoding/json"
 	"os"
+	// "fmt"
 )
 
 func loadDatabase() error {
