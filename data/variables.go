@@ -11,9 +11,13 @@ var DatabasePath = userHome + "/.config/projects-diary"
 // START ~ Database struct in general
 type TaskStructModel struct {
 	Content string   // Tell about what is the tesk objective
-	Status string	 // Tell about how the task is going
-	Time string      // Tell about the task's time limit (optional)
-	Failed bool      // Tell about if the task has run out of time
+
+	CreatedAt time.Time
+	ExpireAt time.Time
+	HaveExpireTime bool
+
+	Completed bool
+
 	ID uint16
 }
 
@@ -26,6 +30,8 @@ type ProjectStructModel struct {
 	HaveExpireTime bool
 
 	Tasks [] TaskStructModel // List all the tasks
+
+	Completed bool
 
 	ID uint16
 

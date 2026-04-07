@@ -7,7 +7,6 @@ import(
 	"github.com/lariel-o/projects-diary/data"
 
 	tea "charm.land/bubbletea/v2"
-
 	"charm.land/lipgloss/v2"
 	"charm.land/lipgloss/v2/table"
 )
@@ -141,17 +140,18 @@ func (m world) view() string {
 
 	rows := make([][]string, data.DB.ProjectsCount)
 	for i := range data.DB.ProjectsCount {
+		currentProject := data.DB.World[i]
 		expireIn := ""
 
 		// set the expire time if it exist
-		if data.DB.World[i].HaveExpireTime {
-			s := data.DB.World[i].ExpireAt.Sub(time.Now())
+		if currentProject.HaveExpireTime {
+			s := currentProject.ExpireAt.Sub(time.Now())
 			expireIn = fmt.Sprintf("%dh%dm", int(s.Hours()), int(s.Minutes()) - int(s.Hours())*60)
 		}
 		rows[i] = []string{
-			fmt.Sprint(data.DB.World[i].ID),
-			data.DB.World[i].ProjectName,
-			data.DB.World[i].Description,
+			fmt.Sprint(currentProject.ID),
+			currentProject.ProjectName,
+			currentProject.Description,
 			expireIn,
 		}
 	}
@@ -165,10 +165,10 @@ func (m world) view() string {
 				return lipgloss.NewStyle().Align(lipgloss.Center).Padding(0, 2, 0, 2)
 
 			case uint16(row) == m.cursor && !m.isSwapingProject:
-				return lipgloss.NewStyle().Background( lipgloss.Color("203") ).Align(lipgloss.Center)
+				return lipgloss.NewStyle().Background(lipgloss.Color("203")).Align(lipgloss.Center)
 
 			case uint16(row) == m.cursor && m.isSwapingProject:
-				return lipgloss.NewStyle().Background( lipgloss.Color("203") ).Align(lipgloss.Right)
+				return lipgloss.NewStyle().Background(lipgloss.Color("203")).Align(lipgloss.Right)
 
 
 			default:

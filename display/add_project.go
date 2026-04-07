@@ -56,7 +56,6 @@ func (m *addProject) init() {
 		if i == 2 {
 			t.Placeholder = "YYYY"
 			t.CharLimit = 4
-
 			t.SetWidth(4)
 		}
 
@@ -98,6 +97,7 @@ func (m *addProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 			tDay, _ 		:= strconv.Atoi(m.inputs[4].Value())
 			tHour, _ 		:= strconv.Atoi(m.inputs[5].Value())
 			tMinute, _ 		:= strconv.Atoi(m.inputs[6].Value())
+
 			if willAddExpire && !m.dateMode {
 				expireAt = time.Date( 
 					currentTime.Year() + 	tYear, 
@@ -182,9 +182,7 @@ func (m addProject) view() (string, *tea.Cursor) {
 			toReturn += fmt.Sprintf("%s\n%s\n\n", m.texts[i], m.inputs[i].View())
 		} 
 		if i == 2 { toReturn += fmt.Sprintf("Date Limit\n⤷ ") } 
-		if i >= 2 {
-			toReturn += m.inputs[i].View()
-		}
+		if i >= 2 { toReturn += m.inputs[i].View() }
 	}
 
 	if !m.dateMode {

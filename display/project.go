@@ -2,10 +2,13 @@ package display
 
 import( 
 	"fmt"
+	"time"
 
 	"github.com/lariel-o/projects-diary/data"
 
 	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
 )
 
 type project struct {
@@ -18,6 +21,8 @@ type project struct {
 
 	projectTracer uint16
 }
+
+var projectDisplayHeader = []string{"ID", "Task content", "Expires in"}
 
 var projectDisplay = project{0, 0, false, false, 0}
 
@@ -113,29 +118,43 @@ func (m project) view() string {
 		return "Nothing here"
 	}
 
-	toReturn := ""
-
-	// cursor* title 
+	rows := make([][]string, data.DB.World[m.projectTracer].TasksCount)
 	for i := range data.DB.World[m.projectTracer].TasksCount {
-		swapingPadding := ""
-		cursor := " "
-		content := ""
+		currentTask := data.DB.World[m.projectTracer].Tasks[i]
+		expiresIn := ""
 
-		if m.isSwapingTask && m.cursor == i {
-			swapingPadding = "    "
+		// set the expire time if it exist
+		if currentTask.HaveExpireTime {
+			s := currentTask.ExpireAt.Sub(time.Now())
+			expiresIn = fmt.Sprintf("%dh%dm", int(s.Hours()), int(s.Minutes()) - int(s.Hours())*60)
 		}
-
-		// set cursor
-		if m.cursor == i {
-			cursor = ">"
+		rows[i] = []string{
+			fmt.Sprint(currentTask.ID),
+			currentTask.Content,
+			expiresIn,
 		}
-
-		// set task content
-		content = data.DB.World[m.projectTracer].Tasks[i].Content
-
-		toReturn += fmt.Sprintf("%s%s %s\n", swapingPadding, cursor, content)
 	}
+	
+	t := table.New().Headers(projectDisplayHeader...).Rows(rows...).
+		Border(lipgloss.NormalBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground( lipgloss.Color("99") )).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			switch {
+			case row == table.HeaderRow:
+				return lipgloss.NewStyle().Align(lipgloss.Center).Padding(0, 2, 0, 2)
 
-	return toReturn
+			case uint16(row) == m.cursor && !m.isSwapingTask:
+				return lipgloss.NewStyle().Background(lipgloss.Color("203")).Align(lipgloss.Center)
+
+			case uint16(row) == m.cursor && m.isSwapingTask:
+				return lipgloss.NewStyle().Background(lipgloss.Color("203")).Align(lipgloss.Right)
+
+
+			default:
+				return lipgloss.NewStyle().Align(lipgloss.Center)
+			}
+		})
+
+	return lipgloss.Sprint(t)
 }
 
