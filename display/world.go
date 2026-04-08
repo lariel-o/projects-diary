@@ -107,11 +107,13 @@ func (m *world) update(msg string, main *Daishi) tea.Cmd {
 			m.isSwapingProject = false
 		}
 
+	// enter add mode
 	case "a":
 		m.isSwapingProject = false
 		main.lastOne = main.who
 		main.who = 3
 
+	// enter edit mode
 	case "e":
 		if data.DB.ProjectsCount != 0 {
 			editProjectDisplay.tracer = m.cursor
@@ -121,6 +123,15 @@ func (m *world) update(msg string, main *Daishi) tea.Cmd {
 			main.who = 5
 			m.isSwapingProject = false
 		}
+
+	// enter mark as finished mode
+	case "ctrl+f":
+		markAsFinishedDisplay.what = 0
+		markAsFinishedDisplay.projectTracer = m.cursor
+
+		main.lastOne = main.who
+		main.who = 7
+		m.isSwapingProject = false
 	}
 
 	return nil

@@ -14,6 +14,7 @@ type Daishi struct {
 	// 4 - Create tasks
 	// 5 - Edit projects
 	// 6 - Edit tasks
+	// 7 - mark task or project as finished
 } 
 
 func (m Daishi) Init() tea.Cmd {
@@ -53,6 +54,8 @@ func (m Daishi) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case 6:
 			return m, editTaskDisplay.update(msg.String(), msg, &m)
 
+		case 7:
+			return m, markAsFinishedDisplay.update(msg.String(), &m)
 		}
 	}
 
@@ -84,6 +87,9 @@ func (m Daishi) View() tea.View {
 
 	case 6:
 		s, c = editTaskDisplay.view()
+
+	case 7:
+		s = markAsFinishedDisplay.view()
 	}
 
 	v := tea.NewView(s)

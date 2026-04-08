@@ -66,6 +66,14 @@ func RemoveProject(src uint16) error {
 	return nil
 }
 
+// swap project Finished field
+func SwapProjectStatus(src uint16) error {
+	DB.World[src].Finished = !DB.World[src].Finished
+
+	if err := writeAtDatabase(); err != nil { return err }
+	return nil
+}
+
 // change projects at the position src and dst
 func SwapProjects(src, dst uint16, permission bool) { 
 	if !permission {
@@ -117,6 +125,13 @@ func RemoveTask(src1, src2 uint16) error {
 
 	DB.World[src1].Tasks = newTasks
 	DB.World[src1].TasksCount--
+	if err := writeAtDatabase(); err != nil { return err }
+	return nil
+}
+
+func SwapTaskStatus(src1, src2 uint16) error {
+	DB.World[src1].Tasks[src2].Finished = !DB.World[src1].Tasks[src2].Finished
+
 	if err := writeAtDatabase(); err != nil { return err }
 	return nil
 }

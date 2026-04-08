@@ -16,7 +16,7 @@ type TaskStructModel struct {
 	ExpireAt time.Time
 	HaveExpireTime bool
 
-	Completed bool
+	Finished bool
 
 	ID uint16
 }
@@ -31,7 +31,7 @@ type ProjectStructModel struct {
 
 	Tasks [] TaskStructModel // List all the tasks
 
-	Completed bool
+	Finished bool
 
 	ID uint16
 

@@ -107,6 +107,15 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 		editTaskDisplay.projectTracer 	= m.projectTracer
 		editTaskDisplay.taskTracer 		= m.cursor
 		editTaskDisplay.setDefaultValues()
+
+	case "ctrl+f":
+		markAsFinishedDisplay.what = 1
+		markAsFinishedDisplay.projectTracer = m.projectTracer
+		markAsFinishedDisplay.taskTracer = m.cursor
+
+		main.lastOne = main.who
+		main.who = 7
+		m.isSwapingTask = false
 	}
 
 	return nil
