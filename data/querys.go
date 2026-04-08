@@ -95,7 +95,7 @@ func EditProject(n, d string, tracer uint16) error {
 
 func AddNewTask(tracer uint16, task TaskStructModel) error {
 	// set task ID
-	task.ID = DB.World[tracer].TasksCount
+	task.ID = DB.World[tracer].LastTaskID
 
 	// sum 1 at TasksCount indicating that a new task is being added
 	DB.World[tracer].TasksCount++
