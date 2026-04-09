@@ -18,12 +18,17 @@ var deleteDisplay = deleteIt{0, 0, 0, false}
 
 func yes(m *deleteIt) {
 	if m.what == 0 {
+		if worldDisplay.cursor == data.DB.ProjectsCount - 1 {
+			worldDisplay.cursor -= 1
+		}
 		data.RemoveProject(m.projectTracer)
-		worldDisplay.cursor = 0
-	} else if m.what == 1 {
+	} else {
+		if projectDisplay.cursor == data.DB.World[m.projectTracer].TasksCount - 1 {
+			projectDisplay.cursor -= 1
+		}
 		data.RemoveTask(m.projectTracer, m.taskTracer)
-		projectDisplay.cursor = 0
 	}
+
 }
 
 func (m *deleteIt) update(msg string, main *Daishi) tea.Cmd {

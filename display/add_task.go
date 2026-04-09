@@ -119,6 +119,7 @@ func (m *addTask) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 		
 			main.who = main.lastOne
 			main.lastOne = 4
+			projectDisplay.cursor = projectDisplay.cursor + 1
 
 			eraseTasksInput()
 		}

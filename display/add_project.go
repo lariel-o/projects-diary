@@ -124,6 +124,7 @@ func (m *addProject) update(msg string, realMsg tea.Msg, main *Daishi) tea.Cmd {
 		
 			main.who = main.lastOne
 			main.lastOne = 3
+			worldDisplay.cursor = worldDisplay.cursor + 1
 
 			eraseProjectsInput()
 		} 
