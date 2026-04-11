@@ -18,10 +18,14 @@ var markAsFinishedDisplay = markAsFinished{0, 0, 0, false}
 
 func yesMark(m *markAsFinished) {
 	if m.what == 0 {
-		data.SwapProjectStatus(m.projectTracer)
 
 	} else if m.what == 1 {
-		data.SwapTaskStatus(m.projectTracer, m.taskTracer)
+		currentTask := data.DB.World[m.projectTracer].Tasks[m.taskTracer]
+		if currentTask.Finished {
+			data.MarkTaskAsOngoing(m.projectTracer, m.taskTracer)
+		} else {
+			data.MarkTaskAsFinished(m.projectTracer, m.taskTracer)
+		}
 	}
 }
 

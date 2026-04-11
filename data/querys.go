@@ -66,14 +66,6 @@ func RemoveProject(src uint16) error {
 	return nil
 }
 
-// swap project Finished field
-func SwapProjectStatus(src uint16) error {
-	DB.World[src].Finished = !DB.World[src].Finished
-
-	if err := writeAtDatabase(); err != nil { return err }
-	return nil
-}
-
 // change projects at the position src and dst
 func SwapProjects(src, dst uint16, permission bool) { 
 	if !permission {
@@ -98,7 +90,7 @@ func AddNewTask(tracer uint16, task TaskStructModel) error {
 	task.ID = DB.World[tracer].LastTaskID
 
 	// sum 1 at TasksCount indicating that a new task is being added
-	DB.World[tracer].TasksCount++
+	DB.World[tracer].GTasksCount++
 	DB.World[tracer].LastTaskID++
 
 	// add the new task to the db
@@ -111,10 +103,10 @@ func AddNewTask(tracer uint16, task TaskStructModel) error {
 }
 
 func RemoveTask(src1, src2 uint16) error {
-	newTasks := make([]TaskStructModel, DB.World[src1].TasksCount - 1)
+	newTasks := make([]TaskStructModel, DB.World[src1].GTasksCount - 1)
 
 	count := 0
-	for i := range DB.World[src1].TasksCount {
+	for i := range DB.World[src1].GTasksCount {
 		if i == src2 {
 			continue
 		}
@@ -124,14 +116,7 @@ func RemoveTask(src1, src2 uint16) error {
 	}
 
 	DB.World[src1].Tasks = newTasks
-	DB.World[src1].TasksCount--
-	if err := writeAtDatabase(); err != nil { return err }
-	return nil
-}
-
-func SwapTaskStatus(src1, src2 uint16) error {
-	DB.World[src1].Tasks[src2].Finished = !DB.World[src1].Tasks[src2].Finished
-
+	DB.World[src1].GTasksCount--
 	if err := writeAtDatabase(); err != nil { return err }
 	return nil
 }
@@ -153,3 +138,58 @@ func EditTask(c string, pTracer, tTracer uint16) error {
 	return nil
 }
 
+func MarkTaskAsFinished(src1, src2 uint16) error {
+	// this function make something like a shift left in the tasks slice (i don't know the correct algorithm name), ex:
+	// [GTsk1, GTsk2, GTsk3, GTsk4, FTsk1, FTsk2]
+	// [GTsk1, NTsk0, GTsk3, GTsk4, FTsk1, FTsk2]
+
+	// [GTsk1, GTsk3, GTsk3, GTsk4, FTsk1, FTsk2]
+	// [GTsk1, GTsk3, GTsk4, GTsk4, FTsk1, FTsk2]
+	// [GTsk1, GTsk3, GTsk3, NTsk0, FTsk1, FTsk2]
+
+	currentProject := &DB.World[src1]
+	currentFinishedTask := currentProject.Tasks[src2]
+
+	// Look that LCTI (last completed task indice) =
+	// (Total tasks) - FTasksCount - 1 =
+	// GTasksCount + FTasksCount - FTasksCount - 1 =
+	// GTasksCount - 1
+	LCTI := currentProject.GTasksCount - 1 
+	for i := src2; i < LCTI; i++ {
+		DB.World[src1].Tasks[i] = DB.World[src1].Tasks[i+1]
+	}
+
+	currentFinishedTask.Finished = true
+	DB.World[src1].Tasks[LCTI] = currentFinishedTask
+
+	currentProject.GTasksCount--
+	currentProject.FTasksCount++
+
+	if e := writeAtDatabase(); e != nil { return e }
+
+	return nil
+}
+
+func MarkTaskAsOngoing(src1, src2 uint16) error {
+	currentProject := &DB.World[src1]
+	currentOngoingTask := currentProject.Tasks[src2]
+
+	// Look that LFTI (last finished task indice) =
+	// (Total tasks) - FTasksCount =
+	// GTasksCount + FTasksCount - FTasksCount =
+	// GTasksCount
+	LFTI := currentProject.GTasksCount
+	for i := src2; i > LFTI; i-- {
+		currentProject.Tasks[i] = currentProject.Tasks[i-1]
+	}
+
+	currentOngoingTask.Finished = false
+	DB.World[src1].Tasks[LFTI] = currentOngoingTask
+
+	currentProject.GTasksCount++
+	currentProject.FTasksCount--
+
+	if e := writeAtDatabase(); e != nil { return e }
+
+	return nil
+}

@@ -35,7 +35,8 @@ type ProjectStructModel struct {
 
 	ID uint16
 
-	TasksCount uint16
+	GTasksCount uint16  // ongoing tasks count
+	FTasksCount uint16  // finished tasks count
 	LastTaskID uint16
 }
 

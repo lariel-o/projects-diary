@@ -36,8 +36,6 @@ func (m *world) update(msg string, main *Daishi) tea.Cmd {
 		// set the default struct of the project display (daishi will manage it well)
 		projectDisplay = project {
 			cursor: 0,
-			showingDescription: 0,
-			isShowingDescription: false,
 			isSwapingTask: false,
 			projectTracer: m.cursor,
 		}

@@ -23,7 +23,7 @@ func yes(m *deleteIt) {
 		}
 		data.RemoveProject(m.projectTracer)
 	} else {
-		if projectDisplay.cursor == data.DB.World[m.projectTracer].TasksCount - 1 {
+		if projectDisplay.cursor == data.DB.World[m.projectTracer].GTasksCount - 1 {
 			projectDisplay.cursor -= 1
 		}
 		data.RemoveTask(m.projectTracer, m.taskTracer)

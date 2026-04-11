@@ -14,9 +14,6 @@ import(
 type project struct {
 	cursor uint16
 
-	showingDescription uint16
-	isShowingDescription bool
-
 	isSwapingTask bool
 
 	projectTracer uint16
@@ -24,7 +21,7 @@ type project struct {
 
 var projectDisplayHeader = []string{"ID", "Task content", "Expires in"}
 
-var projectDisplay = project{0, 0, false, false, 0}
+var projectDisplay = project{0, false, 0}
 
 func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
@@ -35,7 +32,7 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	// move cursor up
 	case "k", "up":
 		if m.cursor == 0 { 
-			m.cursor = uint16(data.DB.World[m.projectTracer].TasksCount - 1)
+			m.cursor = uint16(data.DB.World[m.projectTracer].GTasksCount - 1)
 
 			// try to swap if isSwaping is true
 			data.SwapTasks(0, m.cursor, m.projectTracer, m.isSwapingTask)
@@ -49,11 +46,11 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	
 	// move cursor down
 	case "j", "down":
-		if m.cursor == uint16(data.DB.World[m.projectTracer].TasksCount - 1) {
+		if m.cursor == uint16(data.DB.World[m.projectTracer].GTasksCount - 1) {
 			m.cursor = 0
 
 			// try to swap if isSwaping is true
-			data.SwapTasks(uint16(data.DB.World[m.projectTracer].TasksCount - 1), 0, m.projectTracer, m.isSwapingTask)
+			data.SwapTasks(uint16(data.DB.World[m.projectTracer].GTasksCount - 1), 0, m.projectTracer, m.isSwapingTask)
 		} else {
 			m.cursor += 1
 
@@ -63,16 +60,6 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 
 		return nil
 
-	// show description
-	case "l", "right":
-		m.isShowingDescription = true
-		m.showingDescription = m.cursor
-		return nil
-	
-	// unshow description
-	case "h", "left":
-		m.isShowingDescription = false
-
 	// active and un active the swaping mode
 	case "s":
 		m.isSwapingTask = !m.isSwapingTask
@@ -80,7 +67,7 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	case "d":
 		m.isSwapingTask = false
 
-		if data.DB.World[m.projectTracer].TasksCount != 0 {
+		if data.DB.World[m.projectTracer].GTasksCount != 0 {
 			deleteDisplay = deleteIt {
 				what: 1,
 				projectTracer: m.projectTracer,
@@ -123,12 +110,12 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 
 func (m project) view() string {
 	// check if exist any task
-	if data.DB.World[m.projectTracer].TasksCount == 0 {
+	if data.DB.World[m.projectTracer].GTasksCount == 0 {
 		return "Nothing here"
 	}
 
-	rows := make([][]string, data.DB.World[m.projectTracer].TasksCount)
-	for i := range data.DB.World[m.projectTracer].TasksCount {
+	rows := make([][]string, data.DB.World[m.projectTracer].GTasksCount)
+	for i := range data.DB.World[m.projectTracer].GTasksCount {
 		currentTask := data.DB.World[m.projectTracer].Tasks[i]
 		expiresIn := ""
 
