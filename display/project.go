@@ -3,6 +3,7 @@ package display
 import( 
 	"fmt"
 	"time"
+	"slices"
 
 	"github.com/lariel-o/projects-diary/data"
 
@@ -15,13 +16,14 @@ type project struct {
 	cursor uint16
 
 	isSwapingTask bool
+	isShowingFinishedTasks bool
 
 	projectTracer uint16
 }
 
 var projectDisplayHeader = []string{"ID", "Task content", "Expires in"}
 
-var projectDisplay = project{0, false, 0}
+var projectDisplay = project{0, false, false, 0}
 
 func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	switch msg {
@@ -103,6 +105,9 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 		main.lastOne = main.who
 		main.who = 7
 		m.isSwapingTask = false
+
+	case "ctrl+h": 
+		m.isShowingFinishedTasks = !m.isShowingFinishedTasks
 	}
 
 	return nil
@@ -110,13 +115,15 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 
 func (m project) view() string {
 	// check if exist any task
-	if data.DB.World[m.projectTracer].GTasksCount == 0 {
+	currentProject := &data.DB.World[m.projectTracer] 
+
+	if currentProject.GTasksCount == 0 {
 		return "Nothing here"
 	}
 
-	rows := make([][]string, data.DB.World[m.projectTracer].GTasksCount)
-	for i := range data.DB.World[m.projectTracer].GTasksCount {
-		currentTask := data.DB.World[m.projectTracer].Tasks[i]
+	ongoing := make([][]string, currentProject.GTasksCount)
+	for i := range currentProject.GTasksCount {
+		currentTask := currentProject.Tasks[i]
 		expiresIn := ""
 
 		// set the expire time if it exist
@@ -124,11 +131,38 @@ func (m project) view() string {
 			s := currentTask.ExpireAt.Sub(time.Now())
 			expiresIn = fmt.Sprintf("%dh%dm", int(s.Hours()), int(s.Minutes()) - int(s.Hours())*60)
 		}
-		rows[i] = []string{
+		ongoing[i] = []string{
 			fmt.Sprint(currentTask.ID),
 			currentTask.Content,
 			expiresIn,
 		}
+	}
+
+	finished := make([][]string, currentProject.FTasksCount)
+	fCount := 0
+	for i := currentProject.GTasksCount; i < currentProject.FTasksCount + currentProject.GTasksCount; i++{
+		currentTask := currentProject.Tasks[i]
+		expiresIn := ""
+
+		// set the expire time if it exist
+		if currentTask.HaveExpireTime {
+			s := currentTask.ExpireAt.Sub(time.Now())
+			expiresIn = fmt.Sprintf("%dh%dm", int(s.Hours()), int(s.Minutes()) - int(s.Hours())*60)
+		}
+		finished[fCount] = []string{
+			fmt.Sprint(currentTask.ID),
+			currentTask.Content,
+			expiresIn,
+		}
+
+		fCount++
+	}
+
+	rows := [][]string{}
+	if m.isShowingFinishedTasks {
+		rows = slices.Concat(ongoing, finished)
+	} else {
+		rows = ongoing
 	}
 	
 	t := table.New().Headers(projectDisplayHeader...).Rows(rows...).
