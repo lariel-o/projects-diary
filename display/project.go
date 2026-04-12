@@ -66,7 +66,9 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 			m.cursor += 1
 
 			// try to swap if isSwaping is true
-			data.SwapTasks(m.cursor - 1, m.cursor, m.projectTracer, m.isSwapingTask)
+			if m.cursor <= currentProject.GTasksCount - 1 {
+				data.SwapTasks(m.cursor - 1, m.cursor, m.projectTracer, m.isSwapingTask)
+			} 		
 		}
 
 		return nil
