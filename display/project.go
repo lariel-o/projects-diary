@@ -48,11 +48,20 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 	
 	// move cursor down
 	case "j", "down":
-		if m.cursor == uint16(data.DB.World[m.projectTracer].GTasksCount - 1) {
+		currentProject := data.DB.World[m.projectTracer] 
+		floor := uint16(0)
+
+		if m.isShowingFinishedTasks {
+			floor = currentProject.GTasksCount + currentProject.FTasksCount
+		} else {
+			floor = currentProject.GTasksCount
+		}
+
+		if m.cursor == floor - 1 {
 			m.cursor = 0
 
 			// try to swap if isSwaping is true
-			data.SwapTasks(uint16(data.DB.World[m.projectTracer].GTasksCount - 1), 0, m.projectTracer, m.isSwapingTask)
+			data.SwapTasks(floor - 1, 0, m.projectTracer, m.isSwapingTask)
 		} else {
 			m.cursor += 1
 
@@ -64,7 +73,9 @@ func (m *project) update(msg string, main *Daishi) tea.Cmd {
 
 	// active and un active the swaping mode
 	case "s":
-		m.isSwapingTask = !m.isSwapingTask
+		if m.cursor < data.DB.World[m.projectTracer].GTasksCount {
+			m.isSwapingTask = !m.isSwapingTask
+		}
 
 	case "d":
 		m.isSwapingTask = false

@@ -3,7 +3,7 @@ package data
 import (
 	"encoding/json"
 	"os"
-	// "fmt"
+	"slices"
 )
 
 func loadDatabase() error {
@@ -86,15 +86,17 @@ func EditProject(n, d string, tracer uint16) error {
 }
 
 func AddNewTask(tracer uint16, task TaskStructModel) error {
+	currentProject := &DB.World[tracer]
 	// set task ID
-	task.ID = DB.World[tracer].LastTaskID
+	task.ID = currentProject.LastTaskID
 
 	// sum 1 at TasksCount indicating that a new task is being added
-	DB.World[tracer].GTasksCount++
-	DB.World[tracer].LastTaskID++
+	currentProject.GTasksCount++
+	currentProject.LastTaskID++
+
 
 	// add the new task to the db
-	DB.World[tracer].Tasks = append(DB.World[tracer].Tasks, task)
+	currentProject.Tasks = slices.Insert(currentProject.Tasks, int(currentProject.GTasksCount - 1), task)
 
 	// write the new DB
 	if err := writeAtDatabase(); err != nil { return err }
