@@ -59,6 +59,30 @@ func Del(IND uint16, isO bool) {
 
 		// decrement ProjectsCount to make sense
 		DB.OProjectsCount--
+	} else {
+		// save the number of finished projects that have now
+		PJC := DB.FProjectsCount
+
+		// create the new slice that will be replaced at 
+		// databe.FProjects
+		to_replace := make([]database.Project, PJC - 1)
+
+		// ### Interate to set the propers values at the arr
+		counter := 0
+		for i := range PJC {
+			// make sure that the element at IND will not be
+			// in the new array
+			if IND == i { continue }
+
+			to_replace[counter] = DB.FProjects[i]
+			counter++
+		}
+
+		// replace now
+		DB.FProjects = to_replace
+
+		// decrement ProjectsCount to make sense
+		DB.FProjectsCount--
 	}
 
 	querys.WriteAtDatabase()
