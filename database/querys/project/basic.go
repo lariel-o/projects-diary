@@ -26,7 +26,7 @@ func New(PJ database.Project) {
 
 // Execute an algorithm to remove an element from a slice.
 // In this context, it remove a project from the 
-// non-volatiole memory using a indice!
+// non-volatiole memory using the indice you want!
 func Del(IND uint16, ISO bool) {
 	// IND == INDICE
 	// ISO == Is Ongoing?
@@ -85,8 +85,8 @@ func Del(IND uint16, ISO bool) {
 	querys.WriteAtDatabase()
 }
 
-// Change informations from a project
-func Change(IND uint16, PJ database.Project, ISO bool) {
+// Change informations of a project
+func Change(IND uint16, ISO bool, PJ database.Project) {
 	// IND = INDICE
 	// ISO = Is Ongoing?
 	// PJ = Project

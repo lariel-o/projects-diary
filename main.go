@@ -7,8 +7,8 @@ import (
 
 func main() {
 	database.Init()
-	task.New(0, database.Task{
-		Title: "Ola minha nova task",
+	task.Change(0, 1, true, true, database.Task{
+		Title: "Meu novo titulo",
 	})
 }
 
