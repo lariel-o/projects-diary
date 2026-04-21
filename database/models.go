@@ -7,6 +7,8 @@ package database
 
 type Task struct {
 	Title string
+
+	ID uint16
 }
 
 type Project struct {

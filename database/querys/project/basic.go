@@ -13,7 +13,7 @@ func New(PJ database.Project) {
 
 	PJ.ID = DB.NextProjectID 
 
-	// add the new project to the non-volatile memory
+	// add the new project to the volatile memory
 	DB.OProjects = append(DB.OProjects, PJ)
 
 	// ## Manipulate the geral database section (the database struct)
@@ -23,7 +23,6 @@ func New(PJ database.Project) {
 	// write the new project at the non-volatile memory
 	querys.WriteAtDatabase()
 }
-
 
 // Execute an algorithm to remove an element from a slice.
 // In this context, it remove a project from the 

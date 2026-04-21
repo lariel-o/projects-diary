@@ -2,15 +2,13 @@ package main
 
 import (
 	"github.com/lariel-o/projects-diary/database"
-	"github.com/lariel-o/projects-diary/database/querys/project"
+	"github.com/lariel-o/projects-diary/database/querys/task"
 )
 
 func main() {
 	database.Init()
-	// project.New(database.Project {
-	// 	Title: "Something new 4",
-	// })
-	// project.Del(1, true)
-	project.Mov(3, false, true)
+	task.New(0, database.Task{
+		Title: "Ola minha nova task",
+	})
 }
 
