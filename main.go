@@ -7,6 +7,11 @@ import (
 
 func main() {
 	database.Init()
-	project.New()
+	// project.New("Meu segundo projeto!!")
+	// project.New("Meu terceiro projeto!!")
+	// project.New("Meu quarto projeto!!")
+	// project.New("Meu quinto projeto!!")
+	project.New("Meu quinto projeto!!")
+	// project.Del(0, true)
 }
 

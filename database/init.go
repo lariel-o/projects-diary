@@ -8,7 +8,7 @@ import (
 
 const PROJECT_DIR = "/projects-diary"
 
-// ### LOAD EMPTY DATABASE MODEL IN MEMORY
+// ### LOAD EMPTY DATABASE MODEL IN NON-VOLATILE MEMORY
 var DB = database{}
 
 func Init() {
@@ -28,7 +28,7 @@ func Init() {
 	// the initial configuration
 	_, e = os.ReadFile(absPath + "/db.json")
 	if e != nil && !os.IsExist(e) {
-		INIT_DB := []byte(`{"OProjects":{},"FProjects":{},"OProjectsCount":0,"FProjectsCount":0,"ID":0}`)
+		INIT_DB := []byte(`{"OProjects":[],"FProjects":[],"OProjectsCount":0,"FProjectsCount":0,"ID":0}`)
 		os.WriteFile(absPath + "/db.json", INIT_DB, 0666)
 	} else if e != nil { err.LogErr(e) }
 

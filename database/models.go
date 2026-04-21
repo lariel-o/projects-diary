@@ -23,20 +23,22 @@ type Project struct {
 	OTasksCount uint16
 	FTasksCount uint16
 
+	NextTaskID uint16
+
 	ID uint16
 }
 
 type database struct {
 	// Have all ongoing projects
-	OProjects Project 
+	OProjects []Project 
 
 	// Have all finished projects
-	FProjects Project
+	FProjects []Project
 
 	// Count how many projects have the status ongoing/finished
 	OProjectsCount uint16
 	FProjectsCount uint16
 
-	ID uint16
+	NextProjectID uint16
 }
 
