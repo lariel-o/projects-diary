@@ -108,6 +108,9 @@ Nulla facilisi. Ut at leo eu purus interdum posuere. Vestibulum mollis congue fe
 		SetWrap(true).
 		SetScrollable(true)
 
+
+
+	// Description
 	description := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(
@@ -121,11 +124,37 @@ Nulla facilisi. Ut at leo eu purus interdum posuere. Vestibulum mollis congue fe
 		AddItem(descText, 0, 1, true)
 
 
+	// ============ KEYS LOGIC ==============
+	list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Rune() {
+		// move down at list
+		case 'j':
+			current := list.GetCurrentItem()
+			if current < list.GetItemCount()-1 {
+				list.SetCurrentItem(current + 1)
+			}
+			return nil
 
+		// move up at list
+		case 'k':
+			current := list.GetCurrentItem()
+			if current > 0 {
+				list.SetCurrentItem(current - 1)
+			}
+			return nil
 
+		// move to the thirst item
+		case 'g':
+			list.SetCurrentItem(0)
 
-	description.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		// move to the last item
+		case 'G':
+			lastIndex := list.GetItemCount() - 1
+			list.SetCurrentItem(lastIndex)
+		}
+
 		switch event.Key() {
+		// move description up
 		case tcell.KeyUp:
 			row, col := descText.GetScrollOffset()
 			if row > 0 {
@@ -133,28 +162,30 @@ Nulla facilisi. Ut at leo eu purus interdum posuere. Vestibulum mollis congue fe
 			}
 			return nil
 
+		// move description donw
 		case tcell.KeyDown:
 			row, col := descText.GetScrollOffset()
 			descText.ScrollTo(row+1, col)
-
 			return nil
+
+		// move the descripion to the begin
+		case tcell.KeyPgUp:
+			_, col := descText.GetScrollOffset()
+			descText.ScrollTo(0, col)
+			return nil
+
+		// move the description to the end
+		case tcell.KeyPgDn:
+			_, col := descText.GetScrollOffset()
+			descText.ScrollTo(999999, col)
+			return nil
+
+
 		default:
 			return event
 		}
+
 	})
-
-
-	// ============ KEYS LOGIC ==============
-	list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Rune() {
-		case 'd':
-			list.RemoveItem(list.GetCurrentItem())
-			return nil
-		default:
-			return event 
-		}
-	})
-
 
 
 
@@ -164,8 +195,8 @@ Nulla facilisi. Ut at leo eu purus interdum posuere. Vestibulum mollis congue fe
 		SetColumns(120, 0).
 		SetBorders(true).
 		AddItem(headerWrapper, 0, 0, 1, 3, 0, 0, false).
-		AddItem(description, 1, 0, 1, 1, 0, 0, true).
-		AddItem(list, 1, 1, 1, 2, 0, 0, false).
+		AddItem(description, 1, 0, 1, 1, 0, 0, false).
+		AddItem(list, 1, 1, 1, 2, 0, 0, true).
 		AddItem(footer, 2, 0, 1, 3, 0, 0, false)
 
 	return layout
