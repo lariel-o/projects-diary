@@ -22,6 +22,9 @@ func ProjectPage(app *tview.Application) *tview.Grid {
 		AddItem(nil, 0, 1, false)       
 
 
+
+
+
 	// footer text and its container
 	footerText := "(a) add  |  (d) delete  |  (e) edit   |  (m) move item"
 	footer := tview.NewTextView().
@@ -42,19 +45,8 @@ func ProjectPage(app *tview.Application) *tview.Grid {
 
 
 	// description box
-	description := tview.NewFlex().
-		SetDirection(tview.FlexRow).
-		AddItem(
-		tview.NewTextView().
-			SetText("Descrição").
-			SetTextAlign(tview.AlignCenter).
-			SetTextStyle(tcell.StyleDefault.Bold(true)),
-		1, 0, true,
-		).
-		AddItem(nil, 1, 0, false). 
-		AddItem(
-		tview.NewTextView().
-			SetText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean semper ultricies eleifend. Proin auctor metus rhoncus felis hendrerit blandit. Integer maximus metus vitae ante semper, non egestas mi gravida. Aliquam leo ligula, fermentum a metus sollicitudin, malesuada dapibus nunc. Donec et placerat tortor, id tristique dolor. Pellentesque arcu felis, vestibulum nec elementum placerat, pulvinar vitae lacus. Mauris ut lacinia augue. Duis convallis non ex non gravida.
+	descText := tview.NewTextView().
+		SetText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean semper ultricies eleifend. Proin auctor metus rhoncus felis hendrerit blandit. Integer maximus metus vitae ante semper, non egestas mi gravida. Aliquam leo ligula, fermentum a metus sollicitudin, malesuada dapibus nunc. Donec et placerat tortor, id tristique dolor. Pellentesque arcu felis, vestibulum nec elementum placerat, pulvinar vitae lacus. Mauris ut lacinia augue. Duis convallis non ex non gravida.
 
 Fusce in neque eget mauris tempus laoreet eu nec neque. Nam fermentum mollis dolor, sit amet iaculis mauris consectetur vel. Pellentesque eget placerat libero. Ut consectetur justo mauris, sit amet rhoncus neque tincidunt ut. Fusce nec dui in eros eleifend ullamcorper et mattis felis. Pellentesque sodales purus ornare justo pellentesque, ut egestas eros tristique. Phasellus eget diam lacus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla egestas diam in tellus rhoncus, a vulputate augue commodo. Praesent auctor dignissim felis, rhoncus ultricies nibh feugiat eget. Integer euismod erat justo, non pellentesque metus porta bibendum. Nunc congue nisl in erat feugiat tincidunt. Curabitur placerat sapien ac arcu congue, a bibendum ante bibendum. Nam pulvinar eu erat ac blandit.
 
@@ -113,11 +105,43 @@ Donec magna metus, faucibus at metus ac, consectetur sodales lorem. In eu sem an
 Vivamus ac augue purus. Donec nec cursus tortor, eu sollicitudin felis. Nullam a sollicitudin magna. Praesent accumsan tempor ultricies. Sed tincidunt, ex quis congue pellentesque, diam enim tristique felis, quis venenatis eros mauris ac dolor. Aliquam laoreet lobortis sodales. Duis nec elit tortor. Mauris massa ipsum, rhoncus et lobortis et, pretium eget diam.
 
 Nulla facilisi. Ut at leo eu purus interdum posuere. Vestibulum mollis congue felis vitae feugiat. Nunc libero urna, imperdiet vitae commodo eu, viverra ut ex. Mauris commodo lorem in dignissim bibendum. Ut purus leo, sagittis sed metus at, gravida consectetur diam. Vivamus eros massa, tristique sed convallis ac, maximus a dolor. Aenean in orci velit. Sed quis congue purus, sit amet euismod dolor. Vestibulum consequat hendrerit eros nec maximus. Ut metus purus, porta vitae faucibus in, malesuada posuere eros. Curabitur viverra justo diam, aliquam gravida erat interdum in. Duis nec molestie nulla, et porttitor leo. Praesent nec metus nec purus cursus commodo ut sit amet leo. Nullam mollis, erat nec posuere semper, augue dolor aliquet justo, sit amet placerat nisi libero a metus. Proin ac congue nulla, sit amet egestas erat.`).
-			SetTextAlign(tview.AlignLeft).
-			SetWrap(true),
-		0, 1, true,
-		)
+		SetWrap(true).
+		SetScrollable(true)
 
+	description := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(
+		tview.NewTextView().
+			SetText("Description").
+			SetTextAlign(tview.AlignCenter).
+			SetTextStyle(tcell.StyleDefault.Bold(true)),
+		1, 0, true,
+		).
+		AddItem(nil, 1, 0, false). 
+		AddItem(descText, 0, 1, true)
+
+
+
+
+
+	description.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyUp:
+			row, col := descText.GetScrollOffset()
+			if row > 0 {
+				descText.ScrollTo(row-1, col)
+			}
+			return nil
+
+		case tcell.KeyDown:
+			row, col := descText.GetScrollOffset()
+			descText.ScrollTo(row+1, col)
+
+			return nil
+		default:
+			return event
+		}
+	})
 
 
 	// ============ KEYS LOGIC ==============
