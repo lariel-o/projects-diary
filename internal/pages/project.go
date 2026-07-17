@@ -7,7 +7,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-func ProjectPage(app *tview.Application) *tview.Grid {
+func project() *tview.Grid {
 	// ============ DESINIG LOGIC ==============
 	// header and its container
 	header := tview.NewTextView().

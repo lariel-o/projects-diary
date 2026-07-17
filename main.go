@@ -9,9 +9,9 @@ import (
 func main() {
 	app := tview.NewApplication()
 
-	g := pages.ProjectPage(app)
+	p := pages.Dashi(app)
 
-	if err := app.SetRoot(g, true).SetFocus(g).Run(); err != nil {
+	if err := app.SetRoot(p, true).SetFocus(p).Run(); err != nil {
 		panic(err)
 	}
 }
