@@ -1,20 +1,42 @@
-[
-    {
-        "name": "A cool name",
-        "description": "A huuuge description",
-        "oTasks": [
-            {
-                "name": "A cool ongoing task's name",
-                "description": "A huuuge description"
-            }
-        ],
+{
+    "oProject": [
+        {
+            "name": "A cool name",
+            "description": "A huuuge description",
+            "oTasks": [
+                {
+                    "name": "A cool ongoing task's name",
+                    "description": "A huuuge description"
+                }
+            ],
 
-        "fTasks": [
-            {
-                "name": "A cool finilized task's name",
-                "description": "A huuuge description"
-            }
-        ]
-    }
-]
+            "fTasks": [
+                {
+                    "name": "A cool finilized task's name",
+                    "description": "A huuuge description"
+                }
+            ]
+        }
+    ],
+    
+    "fProject": [
+        {
+            "name": "A cool name",
+            "description": "A huuuge description",
+            "oTasks": [
+                {
+                    "name": "A cool ongoing task's name",
+                    "description": "A huuuge description"
+                }
+            ],
+
+            "fTasks": [
+                {
+                    "name": "A cool finilized task's name",
+                    "description": "A huuuge description"
+                }
+            ]
+        }
+    ]
+}
 
