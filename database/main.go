@@ -4,21 +4,64 @@ import (
 	"fmt"
 	"path/filepath"
 	"os"
+	"encoding/json"
 )
 
 type database struct {
-	oProjects []project
-	fProjects []project
+	OProjects []project
+	FProjects []project
 }
+
+
+var home string
+var folderPath string
+var filePath string
+
 
 var db database
 
+
+
+// Read from the database in the non-volatile memory
+func readFromNVMemory() error {
+	// Try to read the file
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open database file: %w", err)
+	}
+
+
+	// Decode the information from the .json to the db variable in the volatile memory
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&db); err != nil {
+		return fmt.Errorf("failed to decode JSON: %w", err)
+	}
+
+	defer file.Close()
+	return nil
+}
+
+
+
+// Save at the database in the non-volatile memory
+func saveToNVMemory() error {
+	data, err := json.MarshalIndent(db, "", "	")
+
+	if err != nil {
+		return fmt.Errorf("failed to marshal database: %w", err)
+	}
+
+	// Try to write to the database in the NV memory
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write database file: %w", err)
+	}
+	return nil
+}
+
+
+
 // InitDatabase make and save the database in the volatile memory
 func InitDatabase() error {
-	// ########
-	// Load the db from non-volatile memory 
-
-
 	// Verify if the folder exist
 	userHome, err := os.UserHomeDir()
 	if err != nil {
@@ -26,8 +69,8 @@ func InitDatabase() error {
 	}
 
 
-	folderPath := filepath.Join(userHome, ".config", "projects-diary")
-	filePath := filepath.Join(folderPath, "database.json")
+	folderPath = filepath.Join(userHome, ".config", "projects-diary")
+	filePath = filepath.Join(folderPath, "database.json")
 
 
 	// Verify if the "pojects-diary" folder exists
@@ -50,6 +93,20 @@ func InitDatabase() error {
 			return fmt.Errorf("err trying to create database file: %w", err)
 		}
 	}
+
+
+	db.OProjects = append(db.OProjects, project{
+		Name: "Lucas",
+		Description: "Something just to say",
+	})
+
+	if err := saveToNVMemory(); err != nil {
+		return fmt.Errorf("Ue: ", err)
+	}
+
+
+	// Load the db from the non-volatile memory
+	readFromNVMemory()
 
 	defer file.Close()
 	return nil

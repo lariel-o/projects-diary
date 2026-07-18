@@ -1,19 +1,19 @@
 package database
 
 type project struct {
-	name string
-	description string
+	Name string
+	Description string
 
 	// Ongoing and Finished tasks
-	oTasks []task
-	fTasks []task
+	OTasks []task
+	FTasks []task
 }
 
 
 func CreateNewProject(name string, desc string) {
-	db.oProjects = append(db.oProjects, project{ 
-		name: name,
-		description: desc,
+	db.OProjects = append(db.OProjects, project{ 
+		Name: name,
+		Description: desc,
 	})
 }
 
