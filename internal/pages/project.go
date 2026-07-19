@@ -7,7 +7,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-func project() *tview.Grid {
+func projectPage() *tview.Grid {
 	// ============ DESINIG LOGIC ==============
 	// header and its container
 	header := tview.NewTextView().
@@ -64,8 +64,20 @@ func project() *tview.Grid {
 		AddItem(descText, 0, 1, true)
 
 
+	// ============ GRID LOGIC ==============
+	layout := tview.NewGrid().
+		SetRows(3, 0, 1).
+		SetColumns(120, 0).
+		SetBorders(true).
+		AddItem(headerWrapper, 0, 0, 1, 3, 0, 0, false).
+		AddItem(description, 1, 0, 1, 1, 0, 0, false).
+		AddItem(list, 1, 1, 1, 2, 0, 0, true).
+		AddItem(footer, 2, 0, 1, 3, 0, 0, false)
+
+
+
 	// ============ KEYS LOGIC ==============
-	list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	layout.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
 		// move down at list
 		case 'j':
@@ -132,15 +144,7 @@ func project() *tview.Grid {
 
 
 
-	// ============ GRID LOGIC ==============
-	layout := tview.NewGrid().
-		SetRows(3, 0, 1).
-		SetColumns(120, 0).
-		SetBorders(true).
-		AddItem(headerWrapper, 0, 0, 1, 3, 0, 0, false).
-		AddItem(description, 1, 0, 1, 1, 0, 0, false).
-		AddItem(list, 1, 1, 1, 2, 0, 0, true).
-		AddItem(footer, 2, 0, 1, 3, 0, 0, false)
+
 
 	return layout
 }
