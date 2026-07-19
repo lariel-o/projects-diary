@@ -5,34 +5,31 @@ import (
 )
 
 
-
-func createProject() *tview.Form {
-	// Create the form
+// The create project page
+func createProjectPage() *tview.Grid {
 	form := tview.NewForm()
 
+	form.SetBorder(true).SetTitle(" Create a new project ")
+	form.SetBorderPadding(2, 2, 2, 2) 
 
-	// Create the field named Project name
+	
 	projectNameInput := tview.NewInputField().
 		SetLabel("Project name").
-		SetFieldWidth(30)
+		SetFieldWidth(90)
+
+
+
 	form.AddFormItem(projectNameInput)
+	form.AddTextArea("Description", "", 90, 15, 0, nil)
+	form.AddButton("Submit", func() {})
+	form.AddButton("Quit", func() {})
 
 
-	// Create the field named Description
-	descriptionArea := tview.NewTextArea().
-		SetLabel("Description")
-	form.AddFormItem(descriptionArea)
+	grid := tview.NewGrid().
+		SetRows(0, 30, 0).      
+		SetColumns(0, 150, 0).  
+		AddItem(form, 1, 1, 1, 1, 0, 0, true)
 
-
-	// Create the submit button
-	form.AddButton("Submit", func() {
-	})
-
-
-	// Create the Quit button
-	form.AddButton("Quit", func() {
-	})
-
-	return form
+	return grid
 }
 

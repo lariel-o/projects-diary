@@ -31,7 +31,7 @@ func Dashi(app *tview.Application) *tview.Pages {
 
 	// Add the "Create Project Page"
 	pagesCollection.AddPage(fmt.Sprintf("%d", cPROJECT_CREATE),
-		createProject(),
+		createProjectPage(),
 		true,
 		false)
 
