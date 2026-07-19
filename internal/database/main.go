@@ -29,6 +29,7 @@ func readFromNVMemory() error {
 	if err != nil {
 		return fmt.Errorf("failed to open database file: %w", err)
 	}
+	defer file.Close()
 
 
 	// Decode the information from the .json to the db variable in the volatile memory
@@ -37,7 +38,6 @@ func readFromNVMemory() error {
 		return fmt.Errorf("failed to decode JSON: %w", err)
 	}
 
-	defer file.Close()
 	return nil
 }
 
@@ -93,17 +93,6 @@ func InitDatabase() error {
 			return fmt.Errorf("err trying to create database file: %w", err)
 		}
 	}
-
-
-	db.OProjects = append(db.OProjects, project{
-		Name: "Lucas",
-		Description: "Something just to say",
-	})
-
-	if err := saveToNVMemory(); err != nil {
-		return fmt.Errorf("Ue: ", err)
-	}
-
 
 	// Load the db from the non-volatile memory
 	readFromNVMemory()

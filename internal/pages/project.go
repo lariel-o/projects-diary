@@ -1,7 +1,7 @@
 package pages
 
 import (
-	// "fmt"
+	"github.com/lariel-o/projects-diary/internal/database"
 
 	"github.com/rivo/tview"
 	"github.com/gdamore/tcell/v2"
@@ -30,27 +30,31 @@ func projectPage() *tview.Grid {
         SetText(footerText)
 
 
+	// Get the project names and its description
+	projectInfos := database.GetProjectNames(true)
 
 	// list 
-	list := tview.NewList().
-		AddItem("Item 1", "", '*', nil).
-		AddItem("item 2", "", '*', nil).
-		AddItem("item 3", "", '*', nil).
-		AddItem("item 4", "", '*', nil).
-		AddItem("item 5", "", '*', nil).
-		AddItem("item 6", "", '*', nil)
+	list := tview.NewList()
 
 
+	// add real projects names
+	for _, j := range projectInfos {
+		list.AddItem(j.Name, "", '*', nil)
+	}
 
-	// description box
+
+	// description text
 	descText := tview.NewTextView().
-		SetText("Something as example").
+		SetText( projectInfos[0].Description ).
 		SetWrap(true).
 		SetScrollable(true)
 
+	// add the matched description
+	list.SetChangedFunc(func(i int, _, _ string, _ rune){
+		descText.SetText( projectInfos[i].Description )
+	})
 
-
-	// Description
+	// Description box
 	description := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(

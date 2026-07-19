@@ -27,7 +27,7 @@ func createProjectPage(p *tview.Pages) *tview.Grid {
 		desc := descField.GetText()
 
 		if name == "" || desc == "" {
-			// janela de erro popup
+			// janela de erro popup (adicionar futuramente)
 		} else {
 			database.CreateNewProject(name, desc)
 			p.SwitchToPage(fmt.Sprintf("%d", cPROJECT))

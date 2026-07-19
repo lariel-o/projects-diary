@@ -3,8 +3,6 @@ package pages
 import (
 	"fmt"
 
-	"github.com/lariel-o/projects-diary/internal/database"
-
 	"github.com/rivo/tview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -57,8 +55,6 @@ func Dashi(app *tview.Application) *tview.Pages {
 
 		return nil
 	})
-
-	database.CreateNewProject("Test", "Some random description")
 
 	return pagesCollection
 }
