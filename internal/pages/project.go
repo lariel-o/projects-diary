@@ -68,7 +68,7 @@ func projectPageStatic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview.
 
 
 
-func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo, handler func(string)) (*tview.Grid, *tview.List, *tview.TextView) {
+func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview.Grid, *tview.List, *tview.TextView, func()) {
 	grid, list, desc := projectPageStatic(projectsInfo)
 
 	// Make the description match with the title
@@ -92,7 +92,6 @@ func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo, handler
 			return nil
 
 		case 'j': 
-			current := current
 			if current == lastIndex {
 				list.SetCurrentItem(0)
 			} else {
@@ -100,8 +99,7 @@ func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo, handler
 			}
 			return nil
 
-		case 'k': // sobe na lista
-			current := current
+		case 'k': 
 			if current == 0 {
 				list.SetCurrentItem(lastIndex)
 			} else {
@@ -116,9 +114,8 @@ func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo, handler
 			return nil
 
 		case 'G': 
-			count := lastIndex
-			if count > 0 {
-				list.SetCurrentItem(count)
+			if lastIndex > 0 {
+				list.SetCurrentItem(lastIndex)
 			}
 			return nil
 		}
@@ -153,26 +150,23 @@ func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo, handler
 		}
 	})
 
-	pages.SetChangedFunc(func() {
-		currentPage, _ := pages.GetFrontPage()
+	setChangedHandler := func() {
+		list.Clear()
 
-		if currentPage == fmt.Sprintf("%d", eProjectPage) {
-			handler(fmt.Sprintf("%d", eProjectPage))
-			list.Clear()
-
-			for _, proj := range *projectsInfo {
-				list.AddItem(proj.Name, "", '*', nil)
-			}
-			if len(*projectsInfo) > 0 {
-				list.SetCurrentItem(0)
-				desc.SetText((*projectsInfo)[0].Description)
-			} else {
-				desc.SetText("")
-			}
-			// go app.Draw()
+		// populate items
+		for _, proj := range *projectsInfo {
+			list.AddItem(proj.Name, "", '*', nil)
 		}
-	})
 
-	return grid, list, desc
+
+		if len(*projectsInfo) > 0 {
+			list.SetCurrentItem(0)
+			desc.SetText((*projectsInfo)[0].Description)
+		} else {
+			desc.SetText("")
+		}
+	}
+
+	return grid, list, desc, setChangedHandler
 }
 

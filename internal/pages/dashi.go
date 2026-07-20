@@ -21,17 +21,7 @@ func switchToPage(p string) {
 }
 
 func Dashi(app *tview.Application) *tview.Pages {
-	// The logic that trace the pages change and what it need to do when it happens
-	// It is used just when the dinamic idea is too complex to be done
-	trace := func(pageName string) {
-		switch pageName {
-		// case Project Page
-		case fmt.Sprintf("%d", eProjectPage):
-			database.GetProjectsInfo(true)	
-		}
-	}
-
-	projectPLayout, _, _ := projectPageDinamic(database.GetProjectsInfo(true), trace)
+	projectPLayout, _, _, projectPChangeHandler := projectPageDinamic(database.GetProjectsInfo(true))
 	createProjectPLayout := createProjectPage(database.CreateNewProject)
 
 	pages.AddPage(fmt.Sprintf("%d", eProjectPage),
@@ -43,6 +33,19 @@ func Dashi(app *tview.Application) *tview.Pages {
 		createProjectPLayout,
 		true,
 		false)
+
+	// The logic that trace the pages change and what it need to do when it happens
+	// It is used just when the dinamic idea is too complex to be done
+	pages.SetChangedFunc(func() {
+		currentPage, _ := pages.GetFrontPage()
+
+		switch currentPage {
+		// case Project Page
+		case fmt.Sprintf("%d", eProjectPage):
+			database.GetProjectsInfo(true)	
+			projectPChangeHandler()
+		}
+	})
 
 
 
