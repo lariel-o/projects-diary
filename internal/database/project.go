@@ -36,7 +36,7 @@ func CreateNewProject(name string, desc string) error {
 	return nil
 }
 
-func GetProjectsInfo(isOngoing bool) *([]ReturnableProjectsInfo) {
+func GetProjectsInfo(isOngoing bool) *[]ReturnableProjectsInfo {
 	readFromNVMemory()
 
 	// Free the slice

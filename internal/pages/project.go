@@ -1,7 +1,7 @@
 package pages
 
 import (
-	// "fmt"
+	"fmt"
 
 	"github.com/lariel-o/projects-diary/internal/database"
 
@@ -68,7 +68,7 @@ func projectPageStatic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview.
 
 
 
-func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview.Grid, *tview.List, *tview.TextView) {
+func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo, handler func(string)) (*tview.Grid, *tview.List, *tview.TextView) {
 	grid, list, desc := projectPageStatic(projectsInfo)
 
 	// Make the description match with the title
@@ -87,6 +87,10 @@ func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview
 		lastIndex := list.GetItemCount() - 1
 
 		switch event.Rune() {
+		case 'c':
+			switchToPage(fmt.Sprintf("%d", eCreateProjectPage))
+			return nil
+
 		case 'j': 
 			current := current
 			if current == lastIndex {
@@ -146,6 +150,26 @@ func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview
 
 		default:
 			return event
+		}
+	})
+
+	pages.SetChangedFunc(func() {
+		currentPage, _ := pages.GetFrontPage()
+
+		if currentPage == fmt.Sprintf("%d", eProjectPage) {
+			handler(fmt.Sprintf("%d", eProjectPage))
+			list.Clear()
+
+			for _, proj := range *projectsInfo {
+				list.AddItem(proj.Name, "", '*', nil)
+			}
+			if len(*projectsInfo) > 0 {
+				list.SetCurrentItem(0)
+				desc.SetText((*projectsInfo)[0].Description)
+			} else {
+				desc.SetText("")
+			}
+			// go app.Draw()
 		}
 	})
 
