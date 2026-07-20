@@ -6,23 +6,38 @@ import (
 	"github.com/lariel-o/projects-diary/internal/database"
 
 	"github.com/rivo/tview"
-	// "github.com/gdamore/tcell/v2"
 )
 
 const (
 	eProjectPage int = iota
 	eCreateProjectPage
+	eWarningPage 
 )
 
-var	pages = tview.NewPages()	
+var (
+	pages = tview.NewPages()
+)
 
 func switchToPage(p string) {
 	pages.SwitchToPage(p)
 }
 
+func callWarningPage(message string, app *tview.Application) {
+	onClose := func() {
+		pages.RemovePage(fmt.Sprintf("%d", eWarningPage))
+	}
+
+	warning := warningPage(message, app, onClose)
+
+	pages.AddPage(fmt.Sprintf("%d", eWarningPage), warning, true, false)
+
+	switchToPage(fmt.Sprintf("%d", eWarningPage))
+}
+
+
 func Dashi(app *tview.Application) *tview.Pages {
 	projectPLayout, _, _, projectPChangeHandler := projectPageDinamic(database.GetProjectsInfo(true))
-	createProjectPLayout := createProjectPage(database.CreateNewProject)
+	createProjectPLayout := createProjectPage(app, database.CreateNewProject)
 
 	pages.AddPage(fmt.Sprintf("%d", eProjectPage),
 		projectPLayout,
@@ -34,21 +49,14 @@ func Dashi(app *tview.Application) *tview.Pages {
 		true,
 		false)
 
-	// The logic that trace the pages change and what it need to do when it happens
-	// It is used just when the dinamic idea is too complex to be done
 	pages.SetChangedFunc(func() {
 		currentPage, _ := pages.GetFrontPage()
-
 		switch currentPage {
-		// case Project Page
 		case fmt.Sprintf("%d", eProjectPage):
-			database.GetProjectsInfo(true)	
+			database.GetProjectsInfo(true)
 			projectPChangeHandler()
 		}
 	})
 
-
-
 	return pages
 }
-

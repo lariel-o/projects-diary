@@ -6,7 +6,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func createProjectPage(createNewProject func(string, string) error ) *tview.Grid {
+func createProjectPage(app *tview.Application,createNewProject func(string, string) error) *tview.Grid {
 	form := tview.NewForm()
 
 	form.SetBorder(true).SetTitle(" Create a new project ")
@@ -22,8 +22,8 @@ func createProjectPage(createNewProject func(string, string) error ) *tview.Grid
 		name := nameField.GetText()
 		desc := descField.GetText()
 
-		if name == "" || desc == "" {
-			// janela de erro popup (adicionar futuramente)
+		if name == ""  {
+			callWarningPage("Be cautious! The project need to have at latest a name", app)
 		} else {
 			createNewProject(name, desc)
 			switchToPage(fmt.Sprintf("%d", eProjectPage))
