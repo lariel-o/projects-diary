@@ -3,6 +3,8 @@ package pages
 import (
 	"fmt"
 
+	"github.com/lariel-o/projects-diary/internal/database"
+
 	"github.com/rivo/tview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -19,30 +21,60 @@ func Dashi(app *tview.Application) *tview.Pages {
 	pagesCollection := tview.NewPages()	
 
 
-	// Add the project page
-	projectPage := projectPage()
+	// ########################## Adding the pages
+	// Add the "Project" page
+	projectGrid, projectList, projectDescription := projectPage()
+
+
+	// Redraw always when the pages are changed
+	pagesCollection.SetChangedFunc(func() {
+
+		currentPage, _ := pagesCollection.GetFrontPage() 
+		switch currentPage {
+		case fmt.Sprintf("%d", cPROJECT):
+			// get the infos for the Project Page
+			projectInfos := database.GetProjectNames(true)
+			if len(*projectInfos) == 0 {
+				for _, j := range *projectInfos {
+					projectList.AddItem(j.Name, "", '*', nil)
+				}
+
+				// add the matched description
+				projectList.SetChangedFunc(func(i int, _, _ string, _ rune) {
+					projectDescription.SetText((*projectInfos)[i].Description)
+				})
+			}
+		}
+
+		// redraw
+		go app.Draw()
+	})
+
+
+
+
+
+
+
 	pagesCollection.AddPage(fmt.Sprintf("%d", cPROJECT),
-		projectPage,
+		projectGrid,
 		true,
 		true)
 
-
-	// Add the "Create Project Page"
+	// Add the "Create Project" Page
 	pagesCollection.AddPage(fmt.Sprintf("%d", cPROJECT_CREATE),
 		createProjectPage(pagesCollection),
 		true,
 		false)
 
-
-
-
+	
 	// Keys logical
-	lastEvent := projectPage.GetInputCapture()
+	lastEvent := projectGrid.GetInputCapture()
 
 
 
 	// ---- Project page logic
-	projectPage.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	projectGrid.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
 		case 'c':
 			pagesCollection.SwitchToPage(fmt.Sprintf("%d", cPROJECT_CREATE))

@@ -1,5 +1,7 @@
 package database
 
+import "fmt"
+
 type project struct {
 	Name string
 	Description string
@@ -22,13 +24,14 @@ func CreateNewProject(name string, desc string) error {
 	})
 
 	if err := saveToNVMemory(); err != nil {
+		fmt.Println("The err was hereeeee")
 		return err
 	}
 
 	return nil
 }
 
-func GetProjectNames(isOngoing bool) []ReturnableProjectInfos {
+func GetProjectNames(isOngoing bool) *([]ReturnableProjectInfos) {
 	readFromNVMemory()
 
 	var interactor *([]project)
@@ -46,6 +49,6 @@ func GetProjectNames(isOngoing bool) []ReturnableProjectInfos {
 
 	}
 
-	return arr
+	return &arr
 }
 
