@@ -3,7 +3,7 @@ package pages
 import (
 	"fmt"
 
-	// "github.com/lariel-o/projects-diary/internal/database"
+	"github.com/lariel-o/projects-diary/internal/database"
 
 	"github.com/rivo/tview"
 	// "github.com/gdamore/tcell/v2"
@@ -21,10 +21,7 @@ func switchToPage(p string) {
 }
 
 func Dashi(app *tview.Application) *tview.Pages {
-	layout, list, textView := projectPageDinamic()
-
-	// NAO ESQUECA DE APAGAR ESSA LINHA
-	fmt.Sprintf("%d %d %d", layout, list, textView)
+	layout, _, _ := projectPageDinamic( database.GetProjectsInfo(true) )
 
 
 	pages.AddPage(fmt.Sprintf("%d", eProjectPage),

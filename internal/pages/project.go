@@ -3,11 +3,13 @@ package pages
 import (
 	// "fmt"
 
+	"github.com/lariel-o/projects-diary/internal/database"
+
 	"github.com/rivo/tview"
 	"github.com/gdamore/tcell/v2"
 )
 
-func projectPageStatic() (*tview.Grid, *tview.List, *tview.TextView) {
+func projectPageStatic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview.Grid, *tview.List, *tview.TextView) {
 	header := tview.NewTextView().
 		SetText("Projetos").
 		SetTextAlign(tview.AlignCenter).
@@ -25,13 +27,17 @@ func projectPageStatic() (*tview.Grid, *tview.List, *tview.TextView) {
 		SetText(footerText)
 
 	list := tview.NewList()
-	list.AddItem("Ola mundo 1", "", '*', nil)
-	list.AddItem("Ola mundo 2", "", '*', nil)
-	list.AddItem("Ola mundo 3", "", '*', nil)
-	list.AddItem("Ola mundo 4", "", '*', nil)
+	// Add all the projects names coming from database
+	for i := range *projectsInfo {
+		list.AddItem( (*projectsInfo)[i].Name, "", '*', nil )	
+	}
 	
 	// Text description 
 	descText := tview.NewTextView().SetWrap(true).SetScrollable(true)
+	if len(*projectsInfo) != 0 {
+		descText.SetText((*projectsInfo)[0].Description)
+	}
+
 
 	// Description box
 	description := tview.NewFlex().
@@ -62,10 +68,18 @@ func projectPageStatic() (*tview.Grid, *tview.List, *tview.TextView) {
 
 
 
-func projectPageDinamic() (*tview.Grid, *tview.List, *tview.TextView) {
-	grid, list, desc := projectPageStatic()
+func projectPageDinamic(projectsInfo *[]database.ReturnableProjectsInfo) (*tview.Grid, *tview.List, *tview.TextView) {
+	grid, list, desc := projectPageStatic(projectsInfo)
 
+	// Make the description match with the title
 	list.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
+		infos := *projectsInfo
+
+		if index >= 0 && index < len(infos) {
+			desc.SetText(infos[index].Description)
+		} else {
+			desc.SetText("")
+		}
 	})
 
 	grid.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {

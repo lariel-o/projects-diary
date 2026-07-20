@@ -1,6 +1,7 @@
 package database
 
-import "fmt"
+import (
+)
 
 type project struct {
 	Name string
@@ -11,10 +12,15 @@ type project struct {
 	FTasks []task
 }
 
-type ReturnableProjectInfos struct {
+type ReturnableProjectsInfo struct {
 	Name string
 	Description string
 }
+
+// A pointer to this variable is returned when need to interact with the projects
+// info dinamicly
+var returnableProjectsInfo []ReturnableProjectsInfo
+
 
 
 func CreateNewProject(name string, desc string) error {
@@ -24,15 +30,18 @@ func CreateNewProject(name string, desc string) error {
 	})
 
 	if err := saveToNVMemory(); err != nil {
-		fmt.Println("The err was hereeeee")
 		return err
 	}
 
 	return nil
 }
 
-func GetProjectNames(isOngoing bool) *([]ReturnableProjectInfos) {
+func GetProjectsInfo(isOngoing bool) *([]ReturnableProjectsInfo) {
 	readFromNVMemory()
+
+	// Free the slice
+	returnableProjectsInfo = nil
+
 
 	var interactor *([]project)
 	if isOngoing {
@@ -41,7 +50,7 @@ func GetProjectNames(isOngoing bool) *([]ReturnableProjectInfos) {
 		interactor = &(db.FProjects)
 	}
 
-	arr := make([]ReturnableProjectInfos, len(*interactor))
+	arr := make([]ReturnableProjectsInfo, len(*interactor))
 
 	for i := range *interactor {
 		arr[i].Name = (*interactor)[i].Name
@@ -49,6 +58,8 @@ func GetProjectNames(isOngoing bool) *([]ReturnableProjectInfos) {
 
 	}
 
-	return &arr
+	returnableProjectsInfo = arr
+
+	return &returnableProjectsInfo
 }
 
