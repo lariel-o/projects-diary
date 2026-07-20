@@ -1,13 +1,13 @@
 package pages
 
 import (
+	// "fmt"
+
 	"github.com/rivo/tview"
 	"github.com/gdamore/tcell/v2"
 )
 
-func projectPage() (*tview.Grid, *tview.List, *tview.TextView) { 
-	// ============ DESINIG LOGIC ==============
-	// header and its container
+func projectPageStatic() (*tview.Grid, *tview.List, *tview.TextView) {
 	header := tview.NewTextView().
 		SetText("Projetos").
 		SetTextAlign(tview.AlignCenter).
@@ -19,21 +19,19 @@ func projectPage() (*tview.Grid, *tview.List, *tview.TextView) {
 		AddItem(header, 1, 0, true).
 		AddItem(nil, 0, 1, false)
 
-	// footer text and its container
 	footerText := "(a) add  |  (d) delete  |  (e) edit   |  (m) move item"
 	footer := tview.NewTextView().
 		SetTextAlign(tview.AlignLeft).
 		SetText(footerText)
 
-	// list
 	list := tview.NewList()
-
-	// description text
-	descText := tview.NewTextView().
-		SetText("").
-		SetWrap(true).
-		SetScrollable(true)
-
+	list.AddItem("Ola mundo 1", "", '*', nil)
+	list.AddItem("Ola mundo 2", "", '*', nil)
+	list.AddItem("Ola mundo 3", "", '*', nil)
+	list.AddItem("Ola mundo 4", "", '*', nil)
+	
+	// Text description 
+	descText := tview.NewTextView().SetWrap(true).SetScrollable(true)
 
 	// Description box
 	description := tview.NewFlex().
@@ -46,9 +44,9 @@ func projectPage() (*tview.Grid, *tview.List, *tview.TextView) {
 			1, 0, true,
 		).
 		AddItem(nil, 1, 0, false).
-		AddItem(descText, 0, 1, true)
+		AddItem(descText, 
+		0, 1, true)
 
-	// ============ GRID LOGIC ==============
 	layout := tview.NewGrid().
 		SetRows(3, 0, 1).
 		SetColumns(120, 0).
@@ -58,78 +56,78 @@ func projectPage() (*tview.Grid, *tview.List, *tview.TextView) {
 		AddItem(list, 1, 1, 1, 2, 0, 0, true).
 		AddItem(footer, 2, 0, 1, 3, 0, 0, false)
 
-	// ============ KEYS LOGIC ==============
-	layout.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Rune() {
-		// move down at list
-		case 'j':
-			current := list.GetCurrentItem()
-			count := list.GetItemCount()
+	return layout, list, descText
+}
 
-			// do nothing if count == 0
-			if count == 0 {
-				return nil
-			}
-	
-			if current == count - 1 {
+
+
+
+func projectPageDinamic() (*tview.Grid, *tview.List, *tview.TextView) {
+	grid, list, desc := projectPageStatic()
+
+	list.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
+	})
+
+	grid.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		current := list.GetCurrentItem()
+		lastIndex := list.GetItemCount() - 1
+
+		switch event.Rune() {
+		case 'j': 
+			current := current
+			if current == lastIndex {
 				list.SetCurrentItem(0)
 			} else {
 				list.SetCurrentItem(current + 1)
 			}
 			return nil
 
-		// move up at list
-		case 'k':
-			current := list.GetCurrentItem()
-			count := list.GetItemCount()
-
-			// do nothing if count == 0
-			if count == 0 {
-				return nil
-			}
-	
+		case 'k': // sobe na lista
+			current := current
 			if current == 0 {
-				list.SetCurrentItem(count - 1)
+				list.SetCurrentItem(lastIndex)
 			} else {
 				list.SetCurrentItem(current - 1)
 			}
 			return nil
 
-		// move to the thirst item
-		case 'g':
-			list.SetCurrentItem(0)
-
-		// move to the last item
-		case 'G':
-			lastIndex := list.GetItemCount() - 1
-			list.SetCurrentItem(lastIndex)
-		}
-
-		switch event.Key() {
-		// move description up
-		case tcell.KeyUp:
-			row, col := descText.GetScrollOffset()
-			if row > 0 {
-				descText.ScrollTo(row-1, col)
+		case 'g': 
+			if lastIndex + 1 > 0 {
+				list.SetCurrentItem(0)
 			}
 			return nil
 
-		// move description down
+		case 'G': 
+			count := lastIndex
+			if count > 0 {
+				list.SetCurrentItem(count)
+			}
+			return nil
+		}
+
+
+
+		switch event.Key() {
+		case tcell.KeyUp:
+			row, col := desc.GetScrollOffset()
+			if row > 0 {
+				desc.ScrollTo(row-1, col)
+			}
+			return nil
+
 		case tcell.KeyDown:
-			row, col := descText.GetScrollOffset()
-			descText.ScrollTo(row+1, col)
+			row, col := desc.GetScrollOffset()
+			desc.ScrollTo(row+1, col)
 			return nil
 
-		// move the description to the begin
 		case tcell.KeyPgUp:
-			_, col := descText.GetScrollOffset()
-			descText.ScrollTo(0, col)
+			_, col := desc.GetScrollOffset()
+			desc.ScrollTo(0, col)
 			return nil
 
-		// move the description to the end
 		case tcell.KeyPgDn:
-			_, col := descText.GetScrollOffset()
-			descText.ScrollTo(999999, col)
+			_, col := desc.GetScrollOffset()
+			desc.ScrollTo(900000, col)
 			return nil
 
 		default:
@@ -137,6 +135,6 @@ func projectPage() (*tview.Grid, *tview.List, *tview.TextView) {
 		}
 	})
 
-	return layout, list, descText 
+	return grid, list, desc
 }
 
